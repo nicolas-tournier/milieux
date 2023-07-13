@@ -20,32 +20,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-document.addEventListener("DOMContentLoaded", function () {
-  let loadEl = document.querySelector("#load");
-
-  try {
-    let app = getApp();
-    console.log('? ', app['functions']);
-    let features = [
-      "auth",
-      "database",
-      "firestore",
-      "functions",
-      "messaging",
-      "storage",
-      "analytics",
-      "remoteConfig",
-      "performance",
-    ].filter((feature) => typeof app[feature] === "function");
-    loadEl.textContent = `Firebase SDK loaded with ${features.join(", ")}`;
-  } catch (e) {
-    console.error("error!!!", e);
-    loadEl.textContent = "Error loading the Firebase SDK, check the console.";
-  }
-});
+initializeApp(firebaseConfig);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
