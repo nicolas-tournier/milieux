@@ -1,5 +1,11 @@
 {
   "projects": {
     "default": "milieux-b9d27"
+  },
+  "targets": {},
+  "etags": {
+    "milieux-b9d27": {
+      "extensionInstances": {}
+    }
   }
 }
