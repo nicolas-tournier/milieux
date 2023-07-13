@@ -4,23 +4,24 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { initializeApp, getApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCTEodBzOkvLL4QHjdhbfo_bnu8HcMqKSQ",
-  authDomain: "milieux-15d1f.firebaseapp.com",
-  databaseURL: "https://milieux-15d1f-default-rtdb.firebaseio.com",
-  projectId: "milieux-15d1f",
-  storageBucket: "milieux-15d1f.appspot.com",
-  messagingSenderId: "710937678877",
-  appId: "1:710937678877:web:cfba7b1a048b56f74062f4",
-  measurementId: "G-MSB98TT8RN",
+  apiKey: "AIzaSyDjU-_Zq6uuvIpUPmS2tHB-MwDSZAwm3gU",
+  authDomain: "milieux-b9d27.firebaseapp.com",
+  projectId: "milieux-b9d27",
+  storageBucket: "milieux-b9d27.appspot.com",
+  messagingSenderId: "450531836406",
+  appId: "1:450531836406:web:eed5dea389557ff8e7c7d7",
+  measurementId: "G-9FN5RL4CVD"
 };
 
 // Initialize Firebase
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 document.addEventListener("DOMContentLoaded", function () {
   let loadEl = document.querySelector("#load");
