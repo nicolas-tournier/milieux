@@ -1,9 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import './firebase/firebaseConfig';
 import App from "./App";
+import { firebaseApp } from './firebase/firebaseConfig';
 import reportWebVitals from "./reportWebVitals";
+import { createAuth } from "./firebase/firebaseAuth";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -18,3 +19,6 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+const fbApp = firebaseApp();
+createAuth(fbApp);
