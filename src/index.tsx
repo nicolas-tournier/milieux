@@ -2,9 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { firebaseApp } from './firebase/firebaseConfig';
+import { firebaseApp } from "./firebase/firebaseConfig";
 import reportWebVitals from "./reportWebVitals";
 import { createAuth } from "./firebase/firebaseAuth";
+import { getGeolocation } from "./firebase/utils";
+import { getFirestore, connectFirestoreEmulator, setDoc, doc } from "firebase/firestore";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -21,4 +23,19 @@ root.render(
 reportWebVitals();
 
 const fbApp = firebaseApp();
-createAuth(fbApp);
+const fsDb = getFirestore(fbApp);
+connectFirestoreEmulator(fsDb, '127.0.0.1', 8080);
+
+async function authCallback(uid) {
+  let geoLoc = await getGeolocation()
+  .then((pos: any) => {
+    return [pos.coords.latitude, pos.coords.longitude];
+  });
+  console.log(geoLoc);
+  console.log(uid);
+  await setDoc(doc(fsDb, 'users', uid), {
+    uid
+  })
+  
+};
+createAuth(fbApp, authCallback);

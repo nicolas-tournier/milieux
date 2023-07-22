@@ -1,6 +1,12 @@
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 
-export const createAuth = (fbApp) => {
+let uid: string;
+
+export const getUid = () => {
+    return uid;
+}
+
+export const createAuth = (fbApp, authCallBack) => {
 
     const firebaseAuth = getAuth(fbApp);
 
@@ -16,8 +22,7 @@ export const createAuth = (fbApp) => {
 
     onAuthStateChanged(firebaseAuth, (user) => {
         if (user) {
-            const uid = user.uid;
-            console.log('uid ', uid);
+            authCallBack(user.uid);
             // ...
         } else {
             // User is signed out

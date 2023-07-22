@@ -8,13 +8,27 @@
  */
 
 import { onRequest } from "firebase-functions/v2/https";
-import * as logger from "firebase-functions/logger";
-
-
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+import * as functions from 'firebase-functions';
+import {
+    onDocumentCreated
+} from "firebase-functions/v2/firestore";
 
 export const helloWorld = onRequest((request, response) => {
-    logger.info("Hello logs!", { structuredData: true });
+    console.log('onRequest');
+    functions.logger.info("Hello logs!", { structuredData: true });
     response.send("Hello from Firebase!");
+});
+
+
+// this watches this collection in firestore db and fires
+export const onCreateUser = onDocumentCreated("users/{userId}", (event) => {
+    const snapshot = event.data;
+    if (!snapshot) {
+        console.log("No data assoc with event");
+        return;
+    }
+
+    const data = snapshot.data();
+    console.log('data ', data);
+    
 });
