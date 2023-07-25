@@ -1,34 +1,30 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
 import { onRequest } from "firebase-functions/v2/https";
-import * as functions from 'firebase-functions';
-import {
-    onDocumentCreated
-} from "firebase-functions/v2/firestore";
+import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
+import { onDocumentCreated, onDocumentWritten } from "firebase-functions/v2/firestore";
+import { firebaseApp } from './firebaseConfig';
 
-export const helloWorld = onRequest((request, response) => {
+const functions = getFunctions(firebaseApp());
+
+connectFunctionsEmulator(functions, 'http://127.0.0.1', 5001);
+
+export const request = onRequest((request, response) => {
     console.log('onRequest');
-    functions.logger.info("Hello logs!", { structuredData: true });
     response.send("Hello from Firebase!");
 });
 
-
-// this watches this collection in firestore db and fires
-export const onCreateUser = onDocumentCreated("users/{userId}", (event) => {
+// this watches this collection in firestore db
+export const onCreate = onDocumentCreated("/users/{userId}", (event) => {
     const snapshot = event.data;
     if (!snapshot) {
-        console.log("No data assoc with event");
+        console.log("No data assoc with event!");
         return;
     }
 
     const data = snapshot.data();
-    console.log('data ', data);
-    
+    console.log('data??? ', data);
+    return;
+});
+
+export const onWrite = onDocumentWritten("users/{userId}", (event) => {
+    console.log('anything?')
 });
