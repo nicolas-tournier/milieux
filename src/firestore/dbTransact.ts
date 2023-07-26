@@ -10,7 +10,7 @@ import {
     getFirestore,
 } from "firebase/firestore";
 
-export async function createReportOnAuth(uid: string) {
+export async function createOrModifyRecord(uid: string) {
 
     const fbApp = firebaseApp();
     const fsDb = getFirestore(fbApp);
