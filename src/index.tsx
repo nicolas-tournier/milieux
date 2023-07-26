@@ -6,7 +6,18 @@ import { firebaseApp } from "./firebase/firebaseConfig";
 import reportWebVitals from "./reportWebVitals";
 import { createAuth } from "./firebase/firebaseAuth";
 import { getGeolocation } from "./firebase/utils";
-import { getFirestore, connectFirestoreEmulator, setDoc, doc } from "firebase/firestore";
+import {
+  getFirestore,
+  connectFirestoreEmulator,
+  addDoc,
+  collection,
+  setDoc,
+  doc,
+  getDocs,
+  query,
+  where,
+  updateDoc,
+} from "firebase/firestore";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -24,18 +35,31 @@ reportWebVitals();
 
 const fbApp = firebaseApp();
 const fsDb = getFirestore(fbApp);
-connectFirestoreEmulator(fsDb, '127.0.0.1', 8080);
+connectFirestoreEmulator(fsDb, "127.0.0.1", 8080);
 
 async function authCallback(uid) {
-  let geoLoc = await getGeolocation()
-  .then((pos: any) => {
+  await setDoc(doc(fsDb, "users", uid), {
+    uid,
+  });
+
+  let geoLoc = await getGeolocation().then((pos: any) => {
     return [pos.coords.latitude, pos.coords.longitude];
   });
-  console.log(geoLoc);
-  console.log(uid);
-  await setDoc(doc(fsDb, 'users', uid), {
-    uid
-  })
-  
-};
+
+  const report = {
+    uid: uid,
+    location: geoLoc,
+  };
+
+  const q = query(collection(fsDb, "reports"), where("uid", "==", uid));
+
+  const querySnapshot = await getDocs(q);
+
+  if (!querySnapshot.empty) {
+    const docRef = querySnapshot.docs[0].ref;
+    await updateDoc(docRef, report);
+  } else {
+    await addDoc(collection(fsDb, "reports"), report);
+  }
+}
 createAuth(fbApp, authCallback);
