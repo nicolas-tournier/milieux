@@ -1,9 +1,11 @@
 import React from "react";
 import "./App.css";
+import ScreenGrid from "./screen-grid/screen-grid";
 
 function App() {
   return (
-    <div className="app">
+    <div id="app" className="app">
+      <ScreenGrid disableGPUAggregation={()=>{}}></ScreenGrid>
     </div>
   );
 }

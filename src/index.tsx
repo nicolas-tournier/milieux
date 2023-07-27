@@ -12,7 +12,6 @@ import {
   setDoc,
   doc,
 } from "firebase/firestore";
-import { createOrModifyRecord } from "./firestore/dbTransact";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -37,7 +36,7 @@ async function authCallback(uid) {
     uid,
   });
 
-  createOrModifyRecord(uid);
+  // createRecord(uid);
 }
 
 createAuth(fbApp, authCallback);

@@ -2,3 +2,11 @@
   background-color: pink;
   height: 100vh;
 }
+
+.screemn-grid {
+  margin: 0;
+  font-family: sans-serif;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
