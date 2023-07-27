@@ -4,15 +4,20 @@ import maplibregl from 'maplibre-gl';
 import DeckGL from '@deck.gl/react';
 import { ScreenGridLayer } from '@deck.gl/aggregation-layers';
 import { isWebGL2 } from '@luma.gl/core';
+import { getGeolocation } from '../firebase/utils';
+import { GeoPoint } from "firebase/firestore";
 
 // Source data CSV
 const DATA_URL =
   'https://raw.githubusercontent.com/visgl/deck.gl-data/master/examples/screen-grid/uber-pickup-locations.json'; // eslint-disable-line
 
+const userLocation = await getGeolocation();
+const userGeoPoint = new GeoPoint(userLocation.coords.latitude, userLocation.coords.longitude);
+
 const INITIAL_VIEW_STATE = {
-  longitude: -73.75,
-  latitude: 40.73,
-  zoom: 9.6,
+  longitude: userGeoPoint.longitude,
+  latitude: userGeoPoint.latitude,
+  zoom: 10.0,
   maxZoom: 16,
   pitch: 0,
   bearing: 0
@@ -33,7 +38,7 @@ export default function ScreenGrid({
   data = DATA_URL,
   cellSize = 20,
   gpuAggregation = true,
-  aggregation = 'SUM',
+  aggregation = 'MEAN',
   disableGPUAggregation,
   mapStyle = MAP_STYLE
 }) {
