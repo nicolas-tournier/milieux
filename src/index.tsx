@@ -7,11 +7,11 @@ import reportWebVitals from "./reportWebVitals";
 import { createAuth } from "./firebase/firebaseAuth";
 
 import {
-  getFirestore,
-  connectFirestoreEmulator,
   setDoc,
   doc,
 } from "firebase/firestore";
+import { createRecord } from "./firestore/databaseTransact";
+import { getFsDb } from "./firestore/createFirestore";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -28,15 +28,15 @@ root.render(
 reportWebVitals(console.log);
 
 const fbApp = firebaseApp();
-const fsDb = getFirestore(fbApp);
-connectFirestoreEmulator(fsDb, "127.0.0.1", 8080);
+const fsDb = getFsDb(fbApp);
+
 
 async function authCallback(uid) {
   await setDoc(doc(fsDb, "users", uid), {
     uid,
   });
 
-  // createRecord(uid);
+  createRecord(uid);
 }
 
 createAuth(fbApp, authCallback);

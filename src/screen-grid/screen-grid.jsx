@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Map } from 'react-map-gl';
 import maplibregl from 'maplibre-gl';
 import DeckGL from '@deck.gl/react';
@@ -6,10 +6,11 @@ import { ScreenGridLayer } from '@deck.gl/aggregation-layers';
 import { isWebGL2 } from '@luma.gl/core';
 import { getGeolocation } from '../firebase/utils';
 import { GeoPoint } from "firebase/firestore";
+import { getMapData } from '../firestore/databaseTransact';
 
 // Source data CSV
-const DATA_URL =
-  'https://raw.githubusercontent.com/visgl/deck.gl-data/master/examples/screen-grid/uber-pickup-locations.json'; // eslint-disable-line
+// const DATA_URL =
+//   'https://raw.githubusercontent.com/visgl/deck.gl-data/master/examples/screen-grid/uber-pickup-locations.json'; // eslint-disable-line
 
 const userLocation = await getGeolocation();
 const userGeoPoint = new GeoPoint(userLocation.coords.latitude, userLocation.coords.longitude);
@@ -17,7 +18,7 @@ const userGeoPoint = new GeoPoint(userLocation.coords.latitude, userLocation.coo
 const INITIAL_VIEW_STATE = {
   longitude: userGeoPoint.longitude,
   latitude: userGeoPoint.latitude,
-  zoom: 10.0,
+  zoom: 9.6,
   maxZoom: 16,
   pitch: 0,
   bearing: 0
@@ -34,18 +35,19 @@ const colorRange = [
   [189, 0, 38, 255]
 ];
 
+
 export default function ScreenGrid({
-  data = DATA_URL,
   cellSize = 20,
   gpuAggregation = true,
-  aggregation = 'MEAN',
+  aggregation = 'SUM',
   disableGPUAggregation,
   mapStyle = MAP_STYLE
 }) {
+
   const layers = [
     new ScreenGridLayer({
       id: 'grid',
-      data,
+      data: [],
       opacity: 0.8,
       getPosition: d => [d[0], d[1]],
       getWeight: d => d[2],
@@ -56,9 +58,28 @@ export default function ScreenGrid({
     })
   ];
 
+  const [layersData, setLayerData] = useState(layers);
+  const [canUpdateMap, setCanUpdateMap] = useState(true);
+
+  useEffect(() => {
+    if(!canUpdateMap) return;
+    getMapData((newData) => {
+      let _layers = new ScreenGridLayer({
+        ...layersData[0].props,
+        data: newData
+      });
+      setLayerData([_layers]);
+    });
+    setCanUpdateMap(false);
+  }, [canUpdateMap]);
+
+  useEffect(() => {
+    console.log("layersData has been updated:", layersData);
+  }, [layersData]);
+
   const onInitialized = gl => {
     if (!isWebGL2(gl)) {
-      console.warn('GPU aggregation is not supported'); // eslint-disable-line
+      console.warn('GPU aggregation is not supported');
       if (disableGPUAggregation) {
         disableGPUAggregation();
       }
@@ -67,7 +88,7 @@ export default function ScreenGrid({
 
   return (
     <DeckGL className="screen-grid"
-      layers={layers}
+      layers={layersData}
       initialViewState={INITIAL_VIEW_STATE}
       onWebGLInitialized={onInitialized}
       controller={true}

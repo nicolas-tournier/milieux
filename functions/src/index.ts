@@ -11,7 +11,6 @@ connectFirestoreEmulator(firestore, '127.0.0.1', 8080);
 
 // this watches this collection in firestore db
 export const onCreate = onDocumentCreated("/users/{userId}", (event) => {
-    console.log('onDocumentCreated? ', event);
     const snapshot = event.data;
     if (!snapshot) {
         console.log("No data assoc with event!");
@@ -22,5 +21,5 @@ export const onCreate = onDocumentCreated("/users/{userId}", (event) => {
 });
 
 export const onWrite = onDocumentWritten("users/{userId}", (event) => {
-    console.log('onDocumentWritten?');
+
 });

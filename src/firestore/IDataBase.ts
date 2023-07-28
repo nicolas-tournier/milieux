@@ -9,5 +9,5 @@ export interface IReport {
 }
 
 export interface ISentiment {
-
+    meanWeight: number
 }
