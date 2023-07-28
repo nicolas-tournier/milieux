@@ -5,7 +5,6 @@ import {
     collection,
     GeoPoint,
     getDocs,
-    doc,
     onSnapshot,
 } from "firebase/firestore";
 import { IReport } from "./IDataBase";
@@ -17,7 +16,7 @@ const fsDb = getFsDb(fbApp);
 export async function createRecord(uid: string) {
 
     let geoLoc = await getGeolocation().then((pos: any) => {
-        return new GeoPoint(pos.coords.latitude, pos.coords.longitude);
+        return new GeoPoint(pos.coords.latitude  + (Math.random()/100), pos.coords.longitude + (Math.random()/100)); // this needs reverting!!!!
     });
 
     const report: IReport = {
@@ -26,7 +25,7 @@ export async function createRecord(uid: string) {
         time: new Date().toDateString(),
         comment: '',
         sentiment: {
-            meanWeight: 5
+            meanWeight: 1 + (Math.floor(Math.random() * 14)) // this needs reverting!!!!
         }
     };
 
@@ -40,10 +39,10 @@ export function getMapData(callback) {
         let mapData: Array<any> = [];
         reports.forEach((doc: any) => {
             const data = doc.data();
-            const entry = [data.location.latitude, data.location.longitude, data.sentiment?.meanWeight]
+            const entry = [data.location.longitude, data.location.latitude, data.sentiment?.meanWeight];
             mapData.push(entry);
         });
-        callback([mapData])
+        callback(mapData)
     });
 }
 
@@ -57,7 +56,7 @@ export function getMapData(callback) {
 //             let arr = new Array(10).fill(0);
 //             arr.forEach((val, index) => {
 //                 let [a, b, c] = entry;
-//                 let e = [a + (Math.random()/100), b  + (Math.random()/100), 1 + (Math.floor(Math.random() * 14))];
+//                 let e = [a + (Math.random()/100), b  + (Math.random()/100), c];
 //                 mapData.push(e);
 //             });
 //             mapData.push(entry);

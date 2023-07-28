@@ -18,7 +18,7 @@ const userGeoPoint = new GeoPoint(userLocation.coords.latitude, userLocation.coo
 const INITIAL_VIEW_STATE = {
   longitude: userGeoPoint.longitude,
   latitude: userGeoPoint.latitude,
-  zoom: 9.6,
+  zoom: 13,
   maxZoom: 16,
   pitch: 0,
   bearing: 0
@@ -37,7 +37,7 @@ const colorRange = [
 
 
 export default function ScreenGrid({
-  cellSize = 20,
+  cellSize = 5,
   gpuAggregation = true,
   aggregation = 'SUM',
   disableGPUAggregation,
