@@ -33,21 +33,35 @@ export async function createRecord(uid: string) {
     await addDoc(collection(fsDb, "reports"), report);
 }
 
+
 export function getMapData(callback) {
     onSnapshot(collection(fsDb, "reports"), async () => {
         const reports = await getDocs(collection(fsDb, "reports"));
         let mapData: Array<any> = [];
         reports.forEach((doc: any) => {
             const data = doc.data();
-            const entry = [data.location.longitude, data.location.latitude, data.sentiment?.meanWeight];
-            let arr = new Array(10).fill(0);
-            arr.forEach((val, index) => {
-                let [a, b, c] = entry;
-                let e = [a + (Math.random()/100), b  + (Math.random()/100), 1 + (Math.floor(Math.random() * 14))];
-                mapData.push(e);
-            });
+            const entry = [data.location.latitude, data.location.longitude, data.sentiment?.meanWeight]
             mapData.push(entry);
         });
-        callback(mapData);
+        callback([mapData])
     });
 }
+
+// export function getMapData(callback) {
+//     onSnapshot(collection(fsDb, "reports"), async () => {
+//         const reports = await getDocs(collection(fsDb, "reports"));
+//         let mapData: Array<any> = [];
+//         reports.forEach((doc: any) => {
+//             const data = doc.data();
+//             const entry = [data.location.longitude, data.location.latitude, data.sentiment?.meanWeight];
+//             let arr = new Array(10).fill(0);
+//             arr.forEach((val, index) => {
+//                 let [a, b, c] = entry;
+//                 let e = [a + (Math.random()/100), b  + (Math.random()/100), 1 + (Math.floor(Math.random() * 14))];
+//                 mapData.push(e);
+//             });
+//             mapData.push(entry);
+//         });
+//         callback(mapData);
+//     });
+// }
