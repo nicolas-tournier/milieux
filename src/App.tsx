@@ -1,13 +1,13 @@
 import React from "react";
 import "./App.css";
-import ScreenGrid from "./screen-grid/screen-grid";
+import Mapping from "./mapping/map";
 
 function App() {
 
   
   return (
     <div id="app" className="app">
-      <ScreenGrid disableGPUAggregation={()=>{}}></ScreenGrid>
+      <Mapping disableGPUAggregation={()=>{}}></Mapping>
     </div>
   );
 }
