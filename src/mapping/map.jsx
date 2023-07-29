@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Map } from 'react-map-gl';
 import maplibregl from 'maplibre-gl';
 import DeckGL from '@deck.gl/react';
@@ -36,9 +36,10 @@ const colorRange = [
 export default function Mapping({
   cellSize = 20,
   gpuAggregation = true,
-  aggregation = 'SUM',
+  aggregation = 'MEAN',
   disableGPUAggregation,
-  mapStyle = MAP_STYLE
+  mapStyle = MAP_STYLE,
+  pickRadius = 50
 }) {
 
   const gridLayerInit = new ScreenGridLayer({
@@ -51,39 +52,27 @@ export default function Mapping({
     colorRange,
     gpuAggregation,
     aggregation,
-    pickable: true,
-    onClick: info => {
-      if (info.object) {
-        const [longitude, latitude] = info.coordinate;
-        setClickCoords([longitude, latitude]);
-      }
-    },
-    onHover: (info, event) => {
-      if (info.object) {
-        const [longitude, latitude] = info.coordinate;
-        setHoverCoords([longitude, latitude]);
-      } else {
-        setHoverCoords(null);
-      }
-    }
+    pickable: true
   });
 
   const scatterplotLayerInit = new ScatterplotLayer({
-    id: 'scatterplot-layer',
+    id: 'scatterplot',
     data: [{ position: [userGeoPoint.longitude, userGeoPoint.latitude] }],
-    getRadius: 50,
+    getRadius: pickRadius,
     opacity: 0.2,
     getFillColor: d => [255, 140, 0],
     getLineColor: d => [0, 0, 0],
     billboard: true,
-    radiusMinPixels: 50,
-    radiusMaxPixels: 50
-
+    radiusMinPixels: pickRadius,
+    radiusMaxPixels: pickRadius
   });
 
-  const [clickCoords, setClickCoords] = useState([userGeoPoint.longitude, userGeoPoint.latitude]);
-  const [hoverCoords, setHoverCoords] = useState([userGeoPoint.longitude, userGeoPoint.latitude]);
-  
+  const deckRef = useRef();
+
+  const [objectsUnderCircle, setObjectsUnderCircle] = useState([]);
+  const [hoverGeoPoint, setHoverGeoPoint] = useState([userGeoPoint.longitude, userGeoPoint.latitude]);
+  const [hoverCoords, setHoverCoords] = useState([0, 0]);
+
   const [gridLayer, setGridLayer] = useState(gridLayerInit);
   const [canUpdateGrid, setCanUpdateGrid] = useState(true);
 
@@ -96,7 +85,7 @@ export default function Mapping({
   useEffect(() => {
     setSLayers([gridLayer, scatterplotLayer]);
   }, [gridLayer, scatterplotLayer]);
-  
+
   useEffect(() => {
     if (!canUpdateGrid) return;
     getMapData((newData) => {
@@ -112,22 +101,42 @@ export default function Mapping({
   useEffect(() => {
     let _spLayer = new ScatterplotLayer({
       ...scatterplotLayer.props,
-      data: [{ position: hoverCoords }]
+      data: [{ position: hoverGeoPoint }]
     });
     setScatterplotLayer(_spLayer);
-  }, [hoverCoords]);
+  }, [hoverGeoPoint]);
 
-  useEffect(() => {
-    // console.log("gridLayer has been updated:", gridLayer);
-  }, [gridLayer]);
+  function onHover(event) {
+    setHoverCoords([event.x, event.y]);
+    setHoverGeoPoint(event.coordinate);
+    findObjectsUnderCircle();
+  }
 
-  useEffect(() => {
-    // console.log("scatterplotLayer has been updated:", scatterplotLayer);
-  }, [scatterplotLayer]);
+  function findObjectsUnderCircle() {
+    const deckInstance = deckRef.current.deck;
+    if (!deckInstance) {
+      // DeckGL instance is not ready yet
+      return;
+    }
+    const objects = deckRef.current.pickObjects({
+      x: hoverCoords[0] - pickRadius,
+      y: hoverCoords[1] - pickRadius,
+      width: pickRadius * 2,
+      height: pickRadius * 2,
+      layerIds: ['grid'],
+    });
 
-  useEffect(() => {
-    // console.log("layers has been updated:", layers);
-  }, [layers]);
+    console.log('! ', objects);
+
+    const filteredObjects = objects.filter((object) => {
+      const dx = object.x - hoverCoords[0];
+      const dy = object.y - hoverCoords[1];
+      return dx * dx + dy * dy <= pickRadius * pickRadius;
+    });
+
+    // console.log(filteredObjects);
+    setObjectsUnderCircle(filteredObjects);
+  }
 
   const onInitialized = gl => {
     if (!isWebGL2(gl)) {
@@ -140,6 +149,9 @@ export default function Mapping({
 
   return (
     <DeckGL className="screen-grid"
+      id="deck"
+      ref={deckRef}
+      onHover={onHover}
       layers={layers}
       initialViewState={INITIAL_VIEW_STATE}
       onWebGLInitialized={onInitialized}
