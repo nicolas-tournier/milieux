@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { Map } from 'react-map-gl';
 import maplibregl from 'maplibre-gl';
 import DeckGL from '@deck.gl/react';
@@ -8,6 +8,8 @@ import { isWebGL2 } from '@luma.gl/core';
 import { getGeolocation } from '../firebase/utils';
 import { GeoPoint } from "firebase/firestore";
 import { getMapData } from '../firestore/databaseTransact';
+import Rbush from "rbush";
+import { WebMercatorViewport } from '@deck.gl/core';
 
 const userLocation = await getGeolocation();
 const userGeoPoint = new GeoPoint(userLocation.coords.latitude, userLocation.coords.longitude);
@@ -16,7 +18,7 @@ const INITIAL_VIEW_STATE = {
   longitude: userGeoPoint.longitude,
   latitude: userGeoPoint.latitude,
   zoom: 15,
-  maxZoom: 16,
+  maxZoom: 15,
   pitch: 0,
   bearing: 0
 };
@@ -72,6 +74,10 @@ export default function Mapping({
   const [objectsUnderCircle, setObjectsUnderCircle] = useState([]);
   const [hoverGeoPoint, setHoverGeoPoint] = useState([userGeoPoint.longitude, userGeoPoint.latitude]);
   const [hoverCoords, setHoverCoords] = useState([0, 0]);
+  const [currentViewPort, setCurrentViewPort] = useState({ width: window.innerWidth, height: window.innerHeight, longitude: userGeoPoint.longitude, latitude: userGeoPoint.latitude, zoom: INITIAL_VIEW_STATE.zoom });
+
+  const [tree, setTree] = useState(0);
+  const [hoveredGeoPoints, setHoveredGeoPoints] = useState([]);
 
   const [gridLayer, setGridLayer] = useState(gridLayerInit);
   const [canUpdateGrid, setCanUpdateGrid] = useState(true);
@@ -95,6 +101,7 @@ export default function Mapping({
       });
       setGridLayer(_gridLayer);
     });
+
     setCanUpdateGrid(false);
   }, [canUpdateGrid]);
 
@@ -106,6 +113,26 @@ export default function Mapping({
     setScatterplotLayer(_spLayer);
   }, [hoverGeoPoint]);
 
+  useEffect(() => {
+    if (!hoverGeoPoint) return;
+    const data = gridLayer.props.data;
+    if (data.length > 0) {
+      const newTree = new Rbush();
+      data.forEach((point, index) => {
+        const bbox = {
+          minX: point[0],
+          maxX: point[0],
+          minY: point[1],
+          maxY: point[1],
+          index: index
+        };
+        newTree.insert(bbox);
+      });
+      setTree(newTree);
+      // console.log(tree)
+    }
+  }, [gridLayer.props.data]);
+
   function onHover(event) {
     setHoverCoords([event.x, event.y]);
     setHoverGeoPoint(event.coordinate);
@@ -113,29 +140,39 @@ export default function Mapping({
   }
 
   function findObjectsUnderCircle() {
-    const deckInstance = deckRef.current.deck;
-    if (!deckInstance) {
-      // DeckGL instance is not ready yet
-      return;
+    if (!hoverGeoPoint || !tree || !currentViewPort) return;
+    const viewport = new WebMercatorViewport(currentViewPort);
+    const { degreesPerUnit } = viewport.getDistanceScales();
+    const currentZoom = currentViewPort.zoom;
+    const scale = Math.pow(2, currentZoom);
+    const radius = pickRadius / scale;
+    const degreesRadiusLong = degreesPerUnit[0] * radius;
+    const degreesRadiusLat = degreesPerUnit[1] * radius;
+
+    const searchArea = {
+      minX: hoverGeoPoint[0] - degreesRadiusLong,
+      maxX: hoverGeoPoint[0] + degreesRadiusLat,
+      minY: hoverGeoPoint[1] - degreesRadiusLong,
+      maxY: hoverGeoPoint[1] + degreesRadiusLat,
+    };
+
+    if (tree) {
+      const candidates = tree.search(searchArea);
+      const filteredGeoPoints = candidates.map(bbox => gridLayer.props.data[bbox.index]);
+
+      setHoveredGeoPoints(filteredGeoPoints);
     }
-    const objects = deckRef.current.pickObjects({
-      x: hoverCoords[0] - pickRadius,
-      y: hoverCoords[1] - pickRadius,
-      width: pickRadius * 2,
-      height: pickRadius * 2,
-      layerIds: ['grid'],
+  }
+
+  function onViewStateChange({ viewState }) {
+    setCurrentViewPort({
+      width: viewState.width,
+      height: viewState.height,
+      latitude: viewState.latitude,
+      longitude: viewState.longitude,
+      zoom: viewState.zoom
     });
-
-    console.log('! ', objects);
-
-    const filteredObjects = objects.filter((object) => {
-      const dx = object.x - hoverCoords[0];
-      const dy = object.y - hoverCoords[1];
-      return dx * dx + dy * dy <= pickRadius * pickRadius;
-    });
-
-    // console.log(filteredObjects);
-    setObjectsUnderCircle(filteredObjects);
+    findObjectsUnderCircle();
   }
 
   const onInitialized = gl => {
@@ -155,6 +192,7 @@ export default function Mapping({
       layers={layers}
       initialViewState={INITIAL_VIEW_STATE}
       onWebGLInitialized={onInitialized}
+      onViewStateChange={onViewStateChange}
       controller={true}
     >
       <Map reuseMaps mapLib={maplibregl} mapStyle={mapStyle} preventStyleDiffing={true} />
