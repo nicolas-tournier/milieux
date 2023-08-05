@@ -1,13 +1,13 @@
 import React from "react";
 import "./App.css";
-import Mapping from "./mapping/map";
+import Main from "./ui/main";
 
 function App() {
 
   
   return (
     <div id="app" className="app">
-      <Mapping disableGPUAggregation={()=>{}}></Mapping>
+      <Main></Main>
     </div>
   );
 }

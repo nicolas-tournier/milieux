@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Map } from 'react-map-gl';
 import maplibregl from 'maplibre-gl';
 import DeckGL from '@deck.gl/react';
@@ -10,6 +10,7 @@ import { GeoPoint } from "firebase/firestore";
 import { getMapData } from '../firestore/databaseTransact';
 import Rbush from "rbush";
 import { WebMercatorViewport } from '@deck.gl/core';
+import isEqual from 'lodash/isEqual';
 
 const userLocation = await getGeolocation();
 const userGeoPoint = new GeoPoint(userLocation.coords.latitude, userLocation.coords.longitude);
@@ -39,9 +40,9 @@ export default function Mapping({
   cellSize = 20,
   gpuAggregation = true,
   aggregation = 'MEAN',
-  disableGPUAggregation,
   mapStyle = MAP_STYLE,
-  pickRadius = 50
+  pickRadius = 50,
+  setCurrentHoveredGeoPoints
 }) {
 
   const gridLayerInit = new ScreenGridLayer({
@@ -88,6 +89,8 @@ export default function Mapping({
   const layersData = [gridLayer, scatterplotLayer];
   const [layers, setSLayers] = useState(layersData);
 
+  const prevFilteredGeoPoints = useRef();
+
   useEffect(() => {
     setSLayers([gridLayer, scatterplotLayer]);
   }, [gridLayer, scatterplotLayer]);
@@ -129,9 +132,15 @@ export default function Mapping({
         newTree.insert(bbox);
       });
       setTree(newTree);
-      // console.log(tree)
     }
   }, [gridLayer.props.data]);
+
+  useEffect(() => {
+    if (!isEqual(hoveredGeoPoints, prevFilteredGeoPoints.current)) {
+      prevFilteredGeoPoints.current = hoveredGeoPoints;
+      setCurrentHoveredGeoPoints(hoveredGeoPoints);
+    }
+  }, [hoveredGeoPoints]);
 
   function onHover(event) {
     setHoverCoords([event.x, event.y]);
@@ -159,7 +168,6 @@ export default function Mapping({
     if (tree) {
       const candidates = tree.search(searchArea);
       const filteredGeoPoints = candidates.map(bbox => gridLayer.props.data[bbox.index]);
-
       setHoveredGeoPoints(filteredGeoPoints);
     }
   }
@@ -178,9 +186,6 @@ export default function Mapping({
   const onInitialized = gl => {
     if (!isWebGL2(gl)) {
       console.warn('GPU aggregation is not supported');
-      if (disableGPUAggregation) {
-        disableGPUAggregation();
-      }
     }
   };
 
