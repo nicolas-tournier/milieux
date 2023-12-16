@@ -1,5 +1,5 @@
 import { firebaseApp } from "../firebase/firebaseConfig";
-import { getGeolocation } from "../firebase/utils";
+import { getGeolocation } from "../utils/utils";
 import {
     addDoc,
     collection,

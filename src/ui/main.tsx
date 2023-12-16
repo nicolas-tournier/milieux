@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useState } from "react";
+
 import Mapping from "./mapping";
 import ReportsList from "./reportsList";
 import { extractReportsByGeoPoint } from "../firestore/databaseTransact";

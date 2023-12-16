@@ -3,10 +3,16 @@
   height: 100vh;
 }
 
-.screemn-grid {
+.screen-grid {
+  position: absolute;
+  z-index: 1;
   margin: 0;
   font-family: sans-serif;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+}
+
+.reports-list {
+  position: absolute;
+  z-index: 2;
 }

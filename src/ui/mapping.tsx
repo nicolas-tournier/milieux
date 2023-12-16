@@ -1,30 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Map } from 'react-map-gl';
-import maplibregl from 'maplibre-gl';
-import DeckGL from '@deck.gl/react';
-import { ScreenGridLayer } from '@deck.gl/aggregation-layers';
-import { ScatterplotLayer } from '@deck.gl/layers';
-import { isWebGL2 } from '@luma.gl/core';
-import { getGeolocation } from '../firebase/utils';
+import React, { useEffect, useState, useRef } from "react";
+import { Map, MapLib } from "react-map-gl";
+import maplibregl from "maplibre-gl";
+import DeckGL from "@deck.gl/react";
+import { ScreenGridLayer } from "@deck.gl/aggregation-layers";
+import { ScatterplotLayer } from "@deck.gl/layers";
+import { isWebGL2 } from "@luma.gl/core";
+import { getGeolocation } from "../utils/utils";
 import { GeoPoint } from "firebase/firestore";
-import { getMapData } from '../firestore/databaseTransact';
+import { getMapData } from "../firestore/databaseTransact";
 import Rbush from "rbush";
-import { WebMercatorViewport } from '@deck.gl/core';
-import isEqual from 'lodash/isEqual';
+import { WebMercatorViewport } from "@deck.gl/core";
+import isEqual from "lodash/isEqual";
 
-const userLocation = await getGeolocation();
-const userGeoPoint = new GeoPoint(userLocation.coords.latitude, userLocation.coords.longitude);
-
-const INITIAL_VIEW_STATE = {
-  longitude: userGeoPoint.longitude,
-  latitude: userGeoPoint.latitude,
-  zoom: 15,
-  maxZoom: 15,
-  pitch: 0,
-  bearing: 0
-};
-
-const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
+const MAP_STYLE =
+  "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
 const colorRange = [
   [255, 255, 178, 25],
@@ -32,64 +21,96 @@ const colorRange = [
   [254, 178, 76, 127],
   [253, 141, 60, 170],
   [240, 59, 32, 212],
-  [189, 0, 38, 255]
+  [189, 0, 38, 255],
 ];
-
 
 export default function Mapping({
   cellSize = 20,
   gpuAggregation = true,
-  aggregation = 'MEAN',
+  aggregation = "MEAN",
   mapStyle = MAP_STYLE,
   pickRadius = 50,
-  setCurrentHoveredGeoPoints
+  setCurrentHoveredGeoPoints,
 }) {
+  const [userGeoPoint, setUserGeoPoint] = useState<GeoPoint>(new GeoPoint(0, 0));
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const location = await getGeolocation();
+      const geoPoint = new GeoPoint(
+        location.coords.latitude,
+        location.coords.longitude
+      );
+      setUserGeoPoint(geoPoint);
+    };
+
+    fetchData();
+  }, []); // Run only once when the component mounts
+
+  const INITIAL_VIEW_STATE = {
+    longitude: userGeoPoint.longitude,
+    latitude: userGeoPoint.latitude,
+    zoom: 15,
+    maxZoom: 15,
+    pitch: 0,
+    bearing: 0,
+  };
 
   const gridLayerInit = new ScreenGridLayer({
-    id: 'grid',
+    id: "grid",
     data: [],
     opacity: 0.8,
-    getPosition: d => [d[0], d[1]],
-    getWeight: d => d[2],
+    getPosition: (d) => [d[0], d[1]],
+    getWeight: (d) => d[2],
     cellSizePixels: cellSize,
     colorRange,
     gpuAggregation,
     aggregation,
-    pickable: true
+    pickable: true,
   });
 
   const scatterplotLayerInit = new ScatterplotLayer({
-    id: 'scatterplot',
+    id: "scatterplot",
     data: [{ position: [userGeoPoint.longitude, userGeoPoint.latitude] }],
     getRadius: pickRadius,
     opacity: 0.2,
-    getFillColor: d => [255, 140, 0],
-    getLineColor: d => [0, 0, 0],
+    getFillColor: (d) => [255, 140, 0],
+    getLineColor: (d) => [0, 0, 0],
     billboard: true,
     radiusMinPixels: pickRadius,
-    radiusMaxPixels: pickRadius
+    radiusMaxPixels: pickRadius,
   });
 
   const deckRef = useRef();
 
   const [objectsUnderCircle, setObjectsUnderCircle] = useState([]);
-  const [hoverGeoPoint, setHoverGeoPoint] = useState([userGeoPoint.longitude, userGeoPoint.latitude]);
+  const [hoverGeoPoint, setHoverGeoPoint] = useState([
+    userGeoPoint.longitude,
+    userGeoPoint.latitude,
+  ]);
   const [hoverCoords, setHoverCoords] = useState([0, 0]);
-  const [currentViewPort, setCurrentViewPort] = useState({ width: window.innerWidth, height: window.innerHeight, longitude: userGeoPoint.longitude, latitude: userGeoPoint.latitude, zoom: INITIAL_VIEW_STATE.zoom });
+  const [currentViewPort, setCurrentViewPort] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+    longitude: userGeoPoint.longitude,
+    latitude: userGeoPoint.latitude,
+    zoom: INITIAL_VIEW_STATE.zoom,
+  });
 
-  const [tree, setTree] = useState(0);
+  const [tree, setTree] = useState<any>(0);
   const [hoveredGeoPoints, setHoveredGeoPoints] = useState([]);
 
   const [gridLayer, setGridLayer] = useState(gridLayerInit);
   const [canUpdateGrid, setCanUpdateGrid] = useState(true);
 
-  const [scatterplotLayer, setScatterplotLayer] = useState(scatterplotLayerInit);
+  const [scatterplotLayer, setScatterplotLayer] =
+    useState(scatterplotLayerInit);
   const [canUpdateSp, setCanUpdateSp] = useState(true);
 
   const layersData = [gridLayer, scatterplotLayer];
   const [layers, setSLayers] = useState(layersData);
 
-  const prevFilteredGeoPoints = useRef();
+  const prevFilteredGeoPoints = useRef<any[]>();
 
   useEffect(() => {
     setSLayers([gridLayer, scatterplotLayer]);
@@ -100,7 +121,7 @@ export default function Mapping({
     getMapData((newData) => {
       let _gridLayer = new ScreenGridLayer({
         ...gridLayer.props,
-        data: newData
+        data: newData,
       });
       setGridLayer(_gridLayer);
     });
@@ -111,7 +132,7 @@ export default function Mapping({
   useEffect(() => {
     let _spLayer = new ScatterplotLayer({
       ...scatterplotLayer.props,
-      data: [{ position: hoverGeoPoint }]
+      data: [{ position: hoverGeoPoint }],
     });
     setScatterplotLayer(_spLayer);
   }, [hoverGeoPoint]);
@@ -127,7 +148,7 @@ export default function Mapping({
           maxX: point[0],
           minY: point[1],
           maxY: point[1],
-          index: index
+          index: index,
         };
         newTree.insert(bbox);
       });
@@ -167,7 +188,9 @@ export default function Mapping({
 
     if (tree) {
       const candidates = tree.search(searchArea);
-      const filteredGeoPoints = candidates.map(bbox => gridLayer.props.data[bbox.index]);
+      const filteredGeoPoints = candidates.map(
+        (bbox) => gridLayer.props.data[bbox.index]
+      );
       setHoveredGeoPoints(filteredGeoPoints);
     }
   }
@@ -178,19 +201,25 @@ export default function Mapping({
       height: viewState.height,
       latitude: viewState.latitude,
       longitude: viewState.longitude,
-      zoom: viewState.zoom
+      zoom: viewState.zoom,
     });
     findObjectsUnderCircle();
   }
 
-  const onInitialized = gl => {
+  const onInitialized = (gl) => {
     if (!isWebGL2(gl)) {
-      console.warn('GPU aggregation is not supported');
+      console.warn("GPU aggregation is not supported");
     }
   };
 
+  if (!userGeoPoint) {
+    // Loading logic, return null or a loading indicator
+    return null;
+  }
+
   return (
-    <DeckGL className="screen-grid"
+    <DeckGL
+      className="screen-grid"
       id="deck"
       ref={deckRef}
       onHover={onHover}
@@ -199,8 +228,13 @@ export default function Mapping({
       onWebGLInitialized={onInitialized}
       onViewStateChange={onViewStateChange}
       controller={true}
+      preventStyleDiffing={true}
     >
-      <Map reuseMaps mapLib={maplibregl} mapStyle={mapStyle} preventStyleDiffing={true} />
+      <Map
+        reuseMaps
+        mapLib={maplibregl as MapLib<any>}
+        mapStyle={mapStyle}
+      />
     </DeckGL>
   );
 }

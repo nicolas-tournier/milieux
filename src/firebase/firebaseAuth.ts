@@ -11,13 +11,13 @@ export const createAuth = (fbApp, authCallBack) => {
     const firebaseAuth = getAuth(fbApp);
 
     signInAnonymously(firebaseAuth)
-        .then(() => {
-            console.log('signed in!');
+        .then((result) => {
+            console.log("signed in! ", result.user);
         })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log('error ', errorCode, errorMessage);
+            console.log("error ", errorCode, errorMessage);
         });
 
     onAuthStateChanged(firebaseAuth, (user) => {
