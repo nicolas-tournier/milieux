@@ -11,6 +11,8 @@ import { getMapData } from "../firestore/databaseTransact";
 import Rbush from "rbush";
 import { WebMercatorViewport } from "@deck.gl/core";
 import isEqual from "lodash/isEqual";
+import LoadingComponent from "./loading";
+import { WebGLInitializer } from "../utils/webgl";
 
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
@@ -32,7 +34,9 @@ export default function Mapping({
   pickRadius = 50,
   setCurrentHoveredGeoPoints,
 }) {
-  const [userGeoPoint, setUserGeoPoint] = useState<GeoPoint>(new GeoPoint(0, 0));
+  const [userGeoPoint, setUserGeoPoint] = useState<GeoPoint>(
+    new GeoPoint(0, 0)
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -206,15 +210,9 @@ export default function Mapping({
     findObjectsUnderCircle();
   }
 
-  const onInitialized = (gl) => {
-    if (!isWebGL2(gl)) {
-      console.warn("GPU aggregation is not supported");
-    }
-  };
-
   if (!userGeoPoint) {
     // Loading logic, return null or a loading indicator
-    return null;
+    return <LoadingComponent />;
   }
 
   return (
@@ -225,16 +223,12 @@ export default function Mapping({
       onHover={onHover}
       layers={layers}
       initialViewState={INITIAL_VIEW_STATE}
-      onWebGLInitialized={onInitialized}
+      onWebGLInitialized={WebGLInitializer}
       onViewStateChange={onViewStateChange}
       controller={true}
       preventStyleDiffing={true}
     >
-      <Map
-        reuseMaps
-        mapLib={maplibregl as MapLib<any>}
-        mapStyle={mapStyle}
-      />
+      <Map reuseMaps mapLib={maplibregl as MapLib<any>} mapStyle={mapStyle} />
     </DeckGL>
   );
 }
