@@ -36,16 +36,19 @@ export async function createRecord(uid: string) {
 
 
 export function getMapData(callback) {
-    onSnapshot(collection(fsDb, "reports"), async () => {
-        const reports = await getDocs(collection(fsDb, "reports"));
-        let mapData: Array<any> = [];
-        reports.forEach((doc: any) => {
-            const data = doc.data();
-            const entry = [data.location.longitude, data.location.latitude, data.sentiment?.meanWeight];
-            mapData.push(entry);
+    onSnapshot(collection(fsDb, "reports"),
+        async (snapshot) => {
+            let mapData: Array<any> = [];
+            snapshot.docs.forEach((doc: any) => {
+                const data = doc.data();
+                const entry = [data.location.longitude, data.location.latitude, data.sentiment?.meanWeight];
+                mapData.push(entry);
+            });
+            callback(mapData);
+        }, async (error) => {
+            console.log('error ', error);
         });
-        callback(mapData);
-    });
+
 }
 
 export async function extractReportsByGeoPoint(dataSet) {
@@ -56,7 +59,7 @@ export async function extractReportsByGeoPoint(dataSet) {
         const docData = doc.data();
         const location = [docData.location.longitude, docData.location.latitude];
         const filtered = dataSet.filter(data => intersection(data, location).length === location.length);
-        if(filtered.length > 0) {
+        if (filtered.length > 0) {
             matchedReports.push(docData);
         }
     });

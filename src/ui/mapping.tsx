@@ -4,7 +4,6 @@ import maplibregl from "maplibre-gl";
 import DeckGL from "@deck.gl/react";
 import { ScreenGridLayer } from "@deck.gl/aggregation-layers";
 import { ScatterplotLayer } from "@deck.gl/layers";
-import { isWebGL2 } from "@luma.gl/core";
 import { getGeolocation } from "../utils/utils";
 import { GeoPoint } from "firebase/firestore";
 import { getMapData } from "../firestore/databaseTransact";
