@@ -1,20 +1,49 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { colorRange } from "../misc/constants";
+import { ScrollContext } from "../misc/scrollContext";
 
 export default function ReportsList({ reportsByGeoPoint }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const reportsListRef = useRef(null);
+  const { setIsScrolling } = useContext(ScrollContext);
+
+  useEffect(() => {
+
+  }, []);
+
+  useEffect(() => {
+    const handleWheel = (event) => {
+      const reportsListElement: HTMLElement = reportsListRef.current;
+      if (reportsListElement) {
+        const canScrollUp = reportsListElement.scrollTop > 0;
+        const canScrollDown = reportsListElement.scrollTop < reportsListElement.scrollHeight - reportsListElement.clientHeight;
+        const direction = event.deltaY > 0 ? 1 : -1;
+        if ((direction > 0 && canScrollDown) || (direction < 0 && canScrollUp)) {
+          // If the element can be scrolled in the direction of the scroll event, it prevents the default scroll behavior with event.preventDefault()
+          event.preventDefault();
+          reportsListElement.scrollTop += direction * 30;
+        }
+      }
+    };
+    document.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      document.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (event) => {
       let x = event.clientX + 50;
       let y = event.clientY - 25;
 
-      // Get the width and height of the reports list
-      const reportsList = document.querySelector(
-        ".reports-list"
-      ) as HTMLElement;
+      const reportsListElement = reportsListRef.current;
+      const hasVerticalScrollbar = reportsListElement?.scrollHeight > reportsListElement?.clientHeight;
 
-      const reportsListWidth = reportsList ? reportsList.offsetWidth : 0;
-      const reportsListHeight = reportsList ? reportsList.offsetHeight : 0;
+      setIsScrolling(hasVerticalScrollbar);
+
+      const reportsListWidth = reportsListElement ? reportsListElement.offsetWidth : 0;
+      const reportsListHeight = reportsListElement ? reportsListElement.offsetHeight : 0;
 
       // Check if the reports list would go off the right edge of the screen
       if (x + reportsListWidth > window.innerWidth) {
@@ -28,7 +57,11 @@ export default function ReportsList({ reportsByGeoPoint }) {
         y = y - 50;
       }
 
-      setPosition({ x, y });
+      if (y < 0) {
+        y = 10;
+      }
+
+      setPosition({ x: x + 10, y: y + 10 });
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -43,16 +76,17 @@ export default function ReportsList({ reportsByGeoPoint }) {
   }
   return (
     <div
-      className="reports-list bg-white p-4 rounded shadow-lg max-w-xl absolute"
+      ref={reportsListRef}
+      className="reports-list bg-white p-2 rounded shadow-lg max-w-xl overflow-auto scrollbar absolute"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        pointerEvents: "none",
+        maxHeight: "calc(100vh - 30px)",
       }}
     >
-      <ul className="list-none list-inside space-y-2">
+      <ul className="list-none list-inside space-y-2 pointer-events-auto">
         {reportsByGeoPoint.map((report, index) => (
-          <li key={index} className="text-gray-700">
+          <li key={index} className="text-gray-700 pointer-events-none">
             {createReportSummary(report)}
           </li>
         ))}
@@ -64,10 +98,30 @@ export default function ReportsList({ reportsByGeoPoint }) {
 function createReportSummary(rep) {
   const report = JSON.parse(JSON.stringify(rep));
   return (
-    <div className="space-y-1">
-      <p className="text-sm text-gray-500 whitespace-nowrap">{report.time}</p>
-      <p>{report.comment || "howdy doodee how is it that ye doo dee ??"}</p>
-      <hr></hr>
+    <div
+      style={{
+        backgroundColor: getColor(report.sentiment.meanWeight),
+      }}
+    >
+      <div className="p-[5px]">
+        <p className="text-sm text-gray-900 whitespace-nowrap">{report.time}</p>
+        <p className="font-semibold text-black">
+          {report.comment || "howdy doodee how is it that ye doo dee ??"}
+        </p>
+      </div>
     </div>
   );
+}
+
+function getColor(value) {
+  const valueRange = [1, 14];
+  const segmentSize = (valueRange[1] - valueRange[0]) / (colorRange.length - 1);
+  const index = Math.min(
+    Math.floor((value - valueRange[0]) / segmentSize),
+    colorRange.length - 1
+  );
+  const colorArray = colorRange[index];
+  const rgbaColor = `rgba(${colorArray[0]}, ${colorArray[1]}, ${colorArray[2]
+    }, ${Math.min(Math.max(colorArray[3] / 255, 0.2), 0.8)})`;
+  return rgbaColor;
 }

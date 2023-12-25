@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Map, MapLib } from "react-map-gl";
 import maplibregl from "maplibre-gl";
 import DeckGL from "@deck.gl/react";
@@ -12,18 +12,11 @@ import { WebMercatorViewport } from "@deck.gl/core";
 import isEqual from "lodash/isEqual";
 import LoadingComponent from "./loading";
 import { WebGLInitializer } from "../utils/webgl";
+import { colorRange } from "../misc/constants";
+import { ScrollContext } from "../misc/scrollContext";
 
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
-
-const colorRange = [
-  [255, 255, 178, 25],
-  [254, 217, 118, 85],
-  [254, 178, 76, 127],
-  [253, 141, 60, 170],
-  [240, 59, 32, 212],
-  [189, 0, 38, 255],
-];
 
 export default function Mapping({
   cellSize = 20,
@@ -36,6 +29,8 @@ export default function Mapping({
   const [userGeoPoint, setUserGeoPoint] = useState<GeoPoint>(
     new GeoPoint(0, 0)
   );
+
+  const { isScrolling } = useContext(ScrollContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,7 +81,6 @@ export default function Mapping({
 
   const deckRef = useRef();
 
-  const [objectsUnderCircle, setObjectsUnderCircle] = useState([]);
   const [hoverGeoPoint, setHoverGeoPoint] = useState([
     userGeoPoint.longitude,
     userGeoPoint.latitude,
@@ -108,12 +102,13 @@ export default function Mapping({
 
   const [scatterplotLayer, setScatterplotLayer] =
     useState(scatterplotLayerInit);
-  const [canUpdateSp, setCanUpdateSp] = useState(true);
 
   const layersData = [gridLayer, scatterplotLayer];
   const [layers, setSLayers] = useState(layersData);
 
   const prevFilteredGeoPoints = useRef<any[]>();
+
+  const [mapIsInteractive, setMapIsInteractive] = useState(true);
 
   useEffect(() => {
     setSLayers([gridLayer, scatterplotLayer]);
@@ -141,6 +136,16 @@ export default function Mapping({
   }, [hoverGeoPoint]);
 
   useEffect(() => {
+    const fillColor = isScrolling ? [0, 140, 255, 255] : [255, 140, 0, 255];
+    let _spLayer = new ScatterplotLayer({
+      ...scatterplotLayer.props,
+      getFillColor: fillColor
+    });
+    setScatterplotLayer(_spLayer);
+
+  }, [isScrolling]);
+
+  useEffect(() => {
     if (!hoverGeoPoint) return;
     const data = gridLayer.props.data;
     if (data.length > 0) {
@@ -166,12 +171,20 @@ export default function Mapping({
     }
   }, [hoveredGeoPoints]);
 
+  useEffect(() => {
+    findObjectsUnderCircle();
+  }, [hoverGeoPoint, tree, currentViewPort]);
+  
   function onHover(event) {
     setHoverCoords([event.x, event.y]);
     setHoverGeoPoint(event.coordinate);
-    findObjectsUnderCircle();
   }
 
+  function handleClick(event) {
+    if(isScrolling) {
+      setMapIsInteractive(!mapIsInteractive);
+    }
+  }
   function findObjectsUnderCircle() {
     if (!hoverGeoPoint || !tree || !currentViewPort) return;
     const viewport = new WebMercatorViewport(currentViewPort);
@@ -206,7 +219,6 @@ export default function Mapping({
       longitude: viewState.longitude,
       zoom: viewState.zoom,
     });
-    findObjectsUnderCircle();
   }
 
   if (!userGeoPoint) {
@@ -219,12 +231,13 @@ export default function Mapping({
       className="screen-grid"
       id="deck"
       ref={deckRef}
+      onClick={handleClick}
       onHover={onHover}
       layers={layers}
       initialViewState={INITIAL_VIEW_STATE}
       onWebGLInitialized={WebGLInitializer}
       onViewStateChange={onViewStateChange}
-      controller={true}
+      controller={mapIsInteractive}
       preventStyleDiffing={true}
     >
       <Map reuseMaps mapLib={maplibregl as MapLib<any>} mapStyle={mapStyle} />

@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import "./app.css";
 import Main from "./ui/main";
+import { ScrollContext } from "./misc/scrollContext";
 
 function App() {
 
-  
+  const [isScrolling, setIsScrolling] = useState(false);
+
   return (
-    <div id="app" className="app">
-      <Main></Main>
-    </div>
+    <ScrollContext.Provider value={{ isScrolling, setIsScrolling }}>
+      <div id="app" className="app">
+        <Main></Main>
+      </div>
+    </ScrollContext.Provider>
   );
 }
 
