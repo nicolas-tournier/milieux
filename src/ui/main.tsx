@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import Mapping from "./mapping";
 import ReportsList from "./reportsList";
+import SidePanel from "./sidePanel";
 import { extractReportsByGeoPoint } from "../firestore/databaseTransact";
 
 export default function Main() {
@@ -22,6 +23,7 @@ export default function Main() {
 
   return (
     <div className="main">
+      <SidePanel></SidePanel>
       <ReportsList reportsByGeoPoint={reportsByGeoPoint}></ReportsList>
       <Mapping
         setCurrentHoveredGeoPoints={setCurrentHoveredGeoPoints}

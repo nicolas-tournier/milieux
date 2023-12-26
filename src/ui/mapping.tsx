@@ -12,8 +12,8 @@ import { WebMercatorViewport } from "@deck.gl/core";
 import isEqual from "lodash/isEqual";
 import LoadingComponent from "./loading";
 import { WebGLInitializer } from "../utils/webgl";
-import { colorRange } from "../misc/constants";
-import { ScrollContext } from "../misc/scrollContext";
+import { colorRange } from "../const/constants";
+import { ScrollContext } from "../context/scrollContext";
 
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";

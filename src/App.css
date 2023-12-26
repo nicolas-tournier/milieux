@@ -14,9 +14,33 @@
 }
 .reports-list {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
 }
 
 .btn {
   @apply py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75;
+}
+
+.side-panel {
+  position: absolute;
+  top: 1rem;
+  left: 25vw;
+  z-index: 2;
+  width: 50vw;
+  height: 3rem;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+@media screen and (max-width: 1366px) {
+  .side-panel {
+    top: 1rem;
+    left: 1rem;
+    width: calc(100vw - 2rem);
+  }
 }

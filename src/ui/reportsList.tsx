@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { colorRange } from "../misc/constants";
-import { ScrollContext } from "../misc/scrollContext";
+import { colorRange } from "../const/constants";
+import { ScrollContext } from "../context/scrollContext";
 
 export default function ReportsList({ reportsByGeoPoint }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });

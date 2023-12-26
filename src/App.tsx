@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./app.css";
 import Main from "./ui/main";
-import { ScrollContext } from "./misc/scrollContext";
+import { ScrollContext } from "./context/scrollContext";
 
 function App() {
 
