@@ -29,5 +29,7 @@ export const createAuth = (fbApp, authCallBack) => {
             // ...
         }
     });
+
+    return firebaseAuth;
 }
 

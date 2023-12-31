@@ -9,7 +9,7 @@ import {
     onSnapshot
 } from "firebase/firestore";
 import { IReport } from "./IDataBase";
-import { getFsDb } from "./createFirestore";
+import { getFsDb } from "./getFirebaseService";
 import intersection from 'lodash/intersection';
 
 const fbApp = firebaseApp();
@@ -27,7 +27,7 @@ export async function createRecord(uid: string) {
         time: new Date().toDateString(),
         comment: '',
         sentiment: {
-            meanWeight: 1 + (Math.floor(Math.random() * 14)) // this needs reverting!!!!
+            meanWeight: 1 + (Math.floor(Math.random() * 14)) // this needs reverting!!!
         }
     };
 

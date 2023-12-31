@@ -14,6 +14,7 @@ import LoadingComponent from "./loading";
 import { WebGLInitializer } from "../utils/webgl";
 import { colorRange } from "../const/constants";
 import { ScrollContext } from "../context/scrollContext";
+import { useDebouncedCallback } from 'use-debounce';
 
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
@@ -122,9 +123,8 @@ export default function Mapping({
         data: newData,
       });
       setGridLayer(_gridLayer);
+      setCanUpdateGrid(false);
     });
-
-    setCanUpdateGrid(false);
   }, [canUpdateGrid]);
 
   useEffect(() => {
@@ -174,14 +174,14 @@ export default function Mapping({
   useEffect(() => {
     findObjectsUnderCircle();
   }, [hoverGeoPoint, tree, currentViewPort]);
-  
+
   function onHover(event) {
     setHoverCoords([event.x, event.y]);
     setHoverGeoPoint(event.coordinate);
   }
 
   function handleClick(event) {
-    if(isScrolling) {
+    if (isScrolling) {
       setMapIsInteractive(!mapIsInteractive);
     }
   }
@@ -211,14 +211,22 @@ export default function Mapping({
     }
   }
 
-  function onViewStateChange({ viewState }) {
-    setCurrentViewPort({
-      width: viewState.width,
-      height: viewState.height,
-      latitude: viewState.latitude,
-      longitude: viewState.longitude,
-      zoom: viewState.zoom,
-    });
+
+  // ...
+
+  const debouncedCallback = useDebouncedCallback(
+    ({ viewState }) => {
+      setCurrentViewPort({
+        width: viewState.width,
+        height: viewState.height,
+        latitude: viewState.latitude,
+        longitude: viewState.longitude,
+        zoom: viewState.zoom,
+      });
+    }, 100);
+
+  function onViewStateChange(viewState) {
+    debouncedCallback(viewState);
   }
 
   if (!userGeoPoint) {

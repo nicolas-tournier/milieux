@@ -4,14 +4,13 @@ import "./index.css";
 import App from "./app";
 import { firebaseApp } from "./firebase/firebaseConfig";
 // import reportWebVitals from "./reportWebVitals";
-import { createAuth } from "./firebase/firebaseAuth";
 
 import {
   setDoc,
   doc,
 } from "firebase/firestore";
 import { createRecord } from "./firestore/databaseTransact";
-import { getFsDb } from "./firestore/createFirestore";
+import { getAuth, getFsDb } from "./firestore/getFirebaseService";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -39,5 +38,4 @@ async function authCallback(uid) {
 
   createRecord(uid);
 }
-
-createAuth(fbApp, authCallback);
+getAuth(fbApp, authCallback);
