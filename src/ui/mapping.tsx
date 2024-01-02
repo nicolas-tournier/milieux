@@ -13,11 +13,14 @@ import isEqual from "lodash/isEqual";
 import LoadingComponent from "./loading";
 import { WebGLInitializer } from "../utils/webgl";
 import { colorRange } from "../const/constants";
-import { ScrollContext } from "../context/scrollContext";
+import { ScrollContext } from "../providers/scrollContext";
 import { useDebouncedCallback } from 'use-debounce';
+import { MappingUpdateContext } from "../providers/mappingUpdateContext";
 
 const MAP_STYLE =
-  "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
+  // "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
+  // "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+  " https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 
 export default function Mapping({
   cellSize = 20,
@@ -58,11 +61,12 @@ export default function Mapping({
   const gridLayerInit = new ScreenGridLayer({
     id: "grid",
     data: [],
-    opacity: 0.8,
+    opacity: 0.95,
     getPosition: (d) => [d[0], d[1]],
-    getWeight: (d) => d[2],
+    getWeight: (d) => d[2] === 0 ? 0.01 : d[2],
+    colorRange: colorRange,
+    colorDomain: [-1, 1],
     cellSizePixels: cellSize,
-    colorRange,
     gpuAggregation,
     aggregation,
     pickable: true,
@@ -99,33 +103,34 @@ export default function Mapping({
   const [hoveredGeoPoints, setHoveredGeoPoints] = useState([]);
 
   const [gridLayer, setGridLayer] = useState(gridLayerInit);
-  const [canUpdateGrid, setCanUpdateGrid] = useState(true);
+  const { canUpdateMapping, setCanUpdateMapping } = useContext(MappingUpdateContext);
 
   const [scatterplotLayer, setScatterplotLayer] =
     useState(scatterplotLayerInit);
 
   const layersData = [gridLayer, scatterplotLayer];
-  const [layers, setSLayers] = useState(layersData);
+  const [layers, setLayers] = useState(layersData);
 
   const prevFilteredGeoPoints = useRef<any[]>();
 
   const [mapIsInteractive, setMapIsInteractive] = useState(true);
 
   useEffect(() => {
-    setSLayers([gridLayer, scatterplotLayer]);
+    setLayers([gridLayer, scatterplotLayer]);
   }, [gridLayer, scatterplotLayer]);
 
   useEffect(() => {
-    if (!canUpdateGrid) return;
+    if (!canUpdateMapping) return;
     getMapData((newData) => {
       let _gridLayer = new ScreenGridLayer({
         ...gridLayer.props,
         data: newData,
       });
+      console.log(newData);
       setGridLayer(_gridLayer);
-      setCanUpdateGrid(false);
+      setCanUpdateMapping(false);
     });
-  }, [canUpdateGrid]);
+  }, [canUpdateMapping]);
 
   useEffect(() => {
     let _spLayer = new ScatterplotLayer({

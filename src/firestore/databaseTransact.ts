@@ -4,18 +4,19 @@ import {
     addDoc,
     collection,
     GeoPoint,
-    getDocs,
     getDocsFromCache,
-    onSnapshot
+    onSnapshot,
 } from "firebase/firestore";
 import { IReport } from "./IDataBase";
 import { getFsDb } from "./getFirebaseService";
 import intersection from 'lodash/intersection';
+import { RecordSentiment } from "../ui/inputPanel";
+import { colorRange } from "../const/constants";
 
 const fbApp = firebaseApp();
 const fsDb = getFsDb(fbApp);
 
-export async function createRecord(uid: string) {
+export async function createRecord(uid: string, sentiment: RecordSentiment, setCanUpdateMapping: any) {
 
     let geoLoc = await getGeolocation().then((pos: any) => {
         return new GeoPoint(pos.coords.latitude + (Math.random() / 100), pos.coords.longitude + (Math.random() / 100)); // this needs reverting!!!!
@@ -25,17 +26,17 @@ export async function createRecord(uid: string) {
         uid: uid,
         location: geoLoc,
         time: new Date().toDateString(),
-        comment: '',
+        comment: sentiment.comment,
         sentiment: {
-            meanWeight: 1 + (Math.floor(Math.random() * 14)) // this needs reverting!!!
+            meanWeight: sentiment.compound
         }
     };
 
     await addDoc(collection(fsDb, "reports"), report);
 }
 
-
 export function getMapData(callback) {
+
     onSnapshot(collection(fsDb, "reports"),
         async (snapshot) => {
             let mapData: Array<any> = [];

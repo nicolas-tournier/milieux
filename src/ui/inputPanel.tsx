@@ -1,21 +1,33 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { vaderSentiment } from "../services/ai/vaderSentiment";
+import { createRecord } from "../firestore/databaseTransact";
+import { UidContext } from "../providers/uidContext";
+import { MappingUpdateContext } from "../providers/mappingUpdateContext";
+
+export interface RecordSentiment {
+    comment: string;
+    compound: number;
+}
 
 export default function InputPanel() {
-
+    
     const sidePanel = useRef(null);
-    const [inputValue, setInputValue] = useState('');
-
+    const { uid } = useContext(UidContext);
+    const { setCanUpdateMapping } = useContext(MappingUpdateContext);
+    
     const handleMouseEnter = (event) => {
         event.stopPropagation();
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // use sentiment analysis to determine the color of the marker
         const input = event.target[0].value;
-        console.log("input", input);
         const compound = vaderSentiment(input).compound;
+        const recordSentiment: RecordSentiment = {
+            comment: input,
+            compound
+        }
+        createRecord(uid, recordSentiment, setCanUpdateMapping);
     };
 
     return (

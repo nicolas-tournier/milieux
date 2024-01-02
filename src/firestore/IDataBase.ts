@@ -5,7 +5,8 @@ export interface IReport {
     location: GeoPoint;
     time: string;
     comment: string;
-    sentiment?: ISentiment;
+    sentiment: ISentiment;
+    [key: string]: any;
 }
 
 export interface ISentiment {

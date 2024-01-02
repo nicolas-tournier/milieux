@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { colorRange } from "../const/constants";
-import { ScrollContext } from "../context/scrollContext";
+import { ScrollContext } from "../providers/scrollContext";
 
 export default function ReportsList({ reportsByGeoPoint }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -100,7 +100,7 @@ function createReportSummary(rep) {
   return (
     <div
       style={{
-        backgroundColor: getColor(report.sentiment.meanWeight),
+        backgroundColor: getColor(report.sentiment?.meanWeight),
       }}
     >
       <div className="p-[5px]">
@@ -114,12 +114,14 @@ function createReportSummary(rep) {
 }
 
 function getColor(value) {
-  const valueRange = [1, 14];
+  console.log(value);
+  const valueRange = [-1, 1];
   const segmentSize = (valueRange[1] - valueRange[0]) / (colorRange.length - 1);
   const index = Math.min(
     Math.floor((value - valueRange[0]) / segmentSize),
     colorRange.length - 1
   );
+  console.log(index)
   const colorArray = colorRange[index];
   const rgbaColor = `rgba(${colorArray[0]}, ${colorArray[1]}, ${colorArray[2]
     }, ${Math.min(Math.max(colorArray[3] / 255, 0.2), 0.8)})`;

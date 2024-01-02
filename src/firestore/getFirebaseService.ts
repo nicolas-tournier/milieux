@@ -19,7 +19,6 @@ export const getFsDb = (fbApp) => {
 let auth;
 export const getAuth = (fbApp, authCallback) => {
     if (!auth) {
-        console.log(process.env.NODE_ENV);
         auth = createAuth(fbApp, authCallback);
         if (process.env.NODE_ENV === 'development') {
             connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
