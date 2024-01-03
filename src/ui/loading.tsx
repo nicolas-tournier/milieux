@@ -1,8 +1,3 @@
-import React from 'react';
-
-const LoadingComponent = () => {
-  // Replace this with your actual loading component or spinner
+export default function LoadingComponent() {
   return <div>Loading...</div>;
 };
-
-export default LoadingComponent;

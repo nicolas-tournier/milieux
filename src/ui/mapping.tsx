@@ -16,17 +16,22 @@ import { colorRange } from "../const/constants";
 import { ScrollContext } from "../providers/scrollContext";
 import { useDebouncedCallback } from 'use-debounce';
 import { MappingUpdateContext } from "../providers/mappingUpdateContext";
+import { useTheme } from "./themeProvider";
 
-const MAP_STYLE =
-  // "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
-  // "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
-  " https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+// const MAP_STYLE =
+//   "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
+// "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+// " https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+
+const MAP_STYLES = {
+  light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+  dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+};
 
 export default function Mapping({
   cellSize = 20,
   gpuAggregation = true,
   aggregation = "MEAN",
-  mapStyle = MAP_STYLE,
   pickRadius = 50,
   setCurrentHoveredGeoPoints,
 }) {
@@ -35,6 +40,8 @@ export default function Mapping({
   );
 
   const { isScrolling } = useContext(ScrollContext);
+  const { theme } = useTheme();
+  const mapStyle = MAP_STYLES[theme];
 
   useEffect(() => {
     const fetchData = async () => {

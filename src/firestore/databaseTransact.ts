@@ -11,7 +11,6 @@ import { IReport } from "./IDataBase";
 import { getFsDb } from "./getFirebaseService";
 import intersection from 'lodash/intersection';
 import { RecordSentiment } from "../ui/inputPanel";
-import { colorRange } from "../const/constants";
 
 const fbApp = firebaseApp();
 const fsDb = getFsDb(fbApp);

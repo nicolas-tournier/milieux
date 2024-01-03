@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef } from "react";
 import { vaderSentiment } from "../services/ai/vaderSentiment";
 import { createRecord } from "../firestore/databaseTransact";
 import { UidContext } from "../providers/uidContext";

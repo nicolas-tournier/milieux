@@ -114,14 +114,12 @@ function createReportSummary(rep) {
 }
 
 function getColor(value) {
-  console.log(value);
   const valueRange = [-1, 1];
   const segmentSize = (valueRange[1] - valueRange[0]) / (colorRange.length - 1);
   const index = Math.min(
     Math.floor((value - valueRange[0]) / segmentSize),
     colorRange.length - 1
   );
-  console.log(index)
   const colorArray = colorRange[index];
   const rgbaColor = `rgba(${colorArray[0]}, ${colorArray[1]}, ${colorArray[2]
     }, ${Math.min(Math.max(colorArray[3] / 255, 0.2), 0.8)})`;
