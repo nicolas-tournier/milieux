@@ -13,7 +13,7 @@ import isEqual from "lodash/isEqual";
 import LoadingComponent from "./loading";
 import { WebGLInitializer } from "../utils/webgl";
 import { colorRange } from "../const/constants";
-import { ScrollContext } from "../providers/scrollContext";
+import { ScrollContext, UserIsScrollingContext } from "../providers/scrollContext";
 import { useDebouncedCallback } from 'use-debounce';
 import { MappingUpdateContext } from "../providers/mappingUpdateContext";
 import { useTheme } from "./themeProvider";
@@ -25,6 +25,7 @@ import { useTheme } from "./themeProvider";
 
 const MAP_STYLES = {
   light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+  // light: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
   dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
 };
 
@@ -39,7 +40,9 @@ export default function Mapping({
     new GeoPoint(0, 0)
   );
 
-  const { isScrolling } = useContext(ScrollContext);
+  const { isReportsListScrollbar } = useContext(ScrollContext);
+  const { userIsScrolling, setUserIsScrolling } = useContext(UserIsScrollingContext);
+
   const { theme } = useTheme();
   const mapStyle = MAP_STYLES[theme];
 
@@ -76,7 +79,7 @@ export default function Mapping({
     cellSizePixels: cellSize,
     gpuAggregation,
     aggregation,
-    pickable: true,
+    pickable: true
   });
 
   const scatterplotLayerInit = new ScatterplotLayer({
@@ -133,7 +136,6 @@ export default function Mapping({
         ...gridLayer.props,
         data: newData,
       });
-      console.log(newData);
       setGridLayer(_gridLayer);
       setCanUpdateMapping(false);
     });
@@ -148,17 +150,17 @@ export default function Mapping({
   }, [hoverGeoPoint]);
 
   useEffect(() => {
-    const fillColor = isScrolling ? [0, 140, 255, 255] : [255, 140, 0, 255];
+    const fillColor = isReportsListScrollbar ? [0, 140, 255, 255] : [255, 140, 0, 255];
     let _spLayer = new ScatterplotLayer({
       ...scatterplotLayer.props,
       getFillColor: fillColor
     });
     setScatterplotLayer(_spLayer);
 
-  }, [isScrolling]);
+  }, [isReportsListScrollbar]);
 
   useEffect(() => {
-    if (!hoverGeoPoint) return;
+    // if (!hoverGeoPoint) return;
     const data = gridLayer.props.data;
     if (data.length > 0) {
       const newTree = new Rbush();
@@ -193,9 +195,17 @@ export default function Mapping({
   }
 
   function handleClick(event) {
-    if (isScrolling) {
-      setMapIsInteractive(!mapIsInteractive);
+    console.log('isReportsListScrollbar', isReportsListScrollbar);
+    console.log('userIsScrolling before', userIsScrolling);
+    if (isReportsListScrollbar && !userIsScrolling) {
+      setUserIsScrolling(true);
     }
+    if (!isReportsListScrollbar) {
+      setUserIsScrolling(false);
+    }
+    console.log('userIsScrolling after', userIsScrolling);
+    console.log('setMapIsInteractive');
+    setMapIsInteractive(!userIsScrolling);
   }
   function findObjectsUnderCircle() {
     if (!hoverGeoPoint || !tree || !currentViewPort) return;

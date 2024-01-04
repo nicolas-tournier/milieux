@@ -2,8 +2,17 @@
   background-color: pink;
   height: 100vh;
 }
-.main {
+
+::-webkit-scrollbar {
+  width: 0.5em;
+  border-radius: 0.125rem;
 }
+
+::-webkit-scrollbar-thumb {
+  background-color:rgba(0, 140, 255, 0.4);
+  border-radius: 0.125rem;
+}
+
 .screen-grid {
   position: absolute;
   z-index: 1;
@@ -21,7 +30,7 @@
   position: absolute;
   top: 1rem;
   left: 25vw;
-  z-index: 2;
+  z-index: 5;
   width: 50vw;
   height: 3rem;
   background-color: #fff;
@@ -43,12 +52,26 @@
 
 .reports-list {
   position: absolute;
-  z-index: 3;
+  z-index: 2;
+  min-width: 14rem;
 }
 
 .theme-switcher {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  z-index: 2;
+  z-index: 3;
+}
+
+.scroll-info {
+  position: absolute;
+  z-index: 4;
+}
+
+.scroll-info span {
+  font-size: 0.75rem;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
 }

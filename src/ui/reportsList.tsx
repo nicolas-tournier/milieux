@@ -5,11 +5,7 @@ import { ScrollContext } from "../providers/scrollContext";
 export default function ReportsList({ reportsByGeoPoint }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const reportsListRef = useRef(null);
-  const { setIsScrolling } = useContext(ScrollContext);
-
-  useEffect(() => {
-
-  }, []);
+  const { setIsReportsListScrollbar } = useContext(ScrollContext);
 
   useEffect(() => {
     const handleWheel = (event) => {
@@ -40,7 +36,7 @@ export default function ReportsList({ reportsByGeoPoint }) {
       const reportsListElement = reportsListRef.current;
       const hasVerticalScrollbar = reportsListElement?.scrollHeight > reportsListElement?.clientHeight;
 
-      setIsScrolling(hasVerticalScrollbar);
+      setIsReportsListScrollbar(hasVerticalScrollbar);
 
       const reportsListWidth = reportsListElement ? reportsListElement.offsetWidth : 0;
       const reportsListHeight = reportsListElement ? reportsListElement.offsetHeight : 0;
@@ -106,7 +102,7 @@ function createReportSummary(rep) {
       <div className="p-[5px]">
         <p className="text-sm text-gray-900 whitespace-nowrap">{report.time}</p>
         <p className="font-semibold text-black">
-          {report.comment || "howdy doodee how is it that ye doo dee ??"}
+          {report.comment}
         </p>
       </div>
     </div>

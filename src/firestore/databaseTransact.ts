@@ -15,7 +15,7 @@ import { RecordSentiment } from "../ui/inputPanel";
 const fbApp = firebaseApp();
 const fsDb = getFsDb(fbApp);
 
-export async function createRecord(uid: string, sentiment: RecordSentiment, setCanUpdateMapping: any) {
+export async function createRecord(uid: string, sentiment: RecordSentiment): Promise<boolean> {
 
     let geoLoc = await getGeolocation().then((pos: any) => {
         return new GeoPoint(pos.coords.latitude + (Math.random() / 100), pos.coords.longitude + (Math.random() / 100)); // this needs reverting!!!!
@@ -31,7 +31,12 @@ export async function createRecord(uid: string, sentiment: RecordSentiment, setC
         }
     };
 
-    await addDoc(collection(fsDb, "reports"), report);
+    return addDoc(collection(fsDb, "reports"), report).then((docRef) => {
+        return true;
+    }).catch((error) => {
+        console.error("Error adding document: ", error);
+        return false;
+    });
 }
 
 export function getMapData(callback) {
