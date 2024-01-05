@@ -194,19 +194,22 @@ export default function Mapping({
     setHoverGeoPoint(event.coordinate);
   }
 
-  function handleClick(event) {
-    console.log('isReportsListScrollbar', isReportsListScrollbar);
-    console.log('userIsScrolling before', userIsScrolling);
-    if (isReportsListScrollbar && !userIsScrolling) {
-      setUserIsScrolling(true);
-    }
-    if (!isReportsListScrollbar) {
-      setUserIsScrolling(false);
-    }
-    console.log('userIsScrolling after', userIsScrolling);
-    console.log('setMapIsInteractive');
+  useEffect(() => {
     setMapIsInteractive(!userIsScrolling);
+  }, [userIsScrolling]);
+
+  function handleClick(event) {
+
+    let isScrolling = userIsScrolling;
+    if (isReportsListScrollbar && !isScrolling) {
+      isScrolling = true;
+    } else {
+      isScrolling = false;
+    }
+
+    setUserIsScrolling(isScrolling);
   }
+
   function findObjectsUnderCircle() {
     if (!hoverGeoPoint || !tree || !currentViewPort) return;
     const viewport = new WebMercatorViewport(currentViewPort);

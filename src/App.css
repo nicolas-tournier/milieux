@@ -46,19 +46,25 @@
   .input-panel {
     top: 1rem;
     left: 1rem;
-    width: calc(100vw - 2rem);
+    width: calc(100vw - 14rem);
+  }
+}
+
+@media screen and (max-width: 820px) {
+  .input-panel {
+    width: calc(100vw - 8rem);
   }
 }
 
 .reports-list {
   position: absolute;
-  z-index: 2;
+  z-index: 6;
   min-width: 14rem;
 }
 
 .theme-switcher {
   position: absolute;
-  top: 1rem;
+  top: 1.3rem;
   right: 1rem;
   z-index: 3;
 }

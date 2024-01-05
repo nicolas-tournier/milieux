@@ -19,12 +19,12 @@ export default function ThemeSwitcher() {
                 {theme === 'light' ? (
                     <>
                         <i className="fas fa-moon mr-2"></i> {/* Moon icon for light theme */}
-                        Change to Dark
+                        <span className="hidden lg:block">Change to Dark</span>
                     </>
                 ) : (
                     <>
                         <i className="fas fa-sun mr-2"></i> {/* Sun icon for dark theme */}
-                        Change to Light
+                        <span className="hidden lg:block">Change to Light</span>
                     </>
                 )}
             </button>

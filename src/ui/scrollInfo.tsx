@@ -4,7 +4,7 @@ import { ScrollContext, UserIsScrollingContext } from "../providers/scrollContex
 export default function ScrollInfo() {
 
     const { isReportsListScrollbar } = useContext(ScrollContext);
-    const { userIsScrolling } = useContext(UserIsScrollingContext);
+    const { userIsScrolling, setUserIsScrolling } = useContext(UserIsScrollingContext);
 
     const [position, setPosition] = useState({ x: 0, y: 0 });
 
@@ -12,9 +12,13 @@ export default function ScrollInfo() {
         const handleMouseMove = (event) => {
             let x = event.clientX;
             let y = event.clientY;
-            setPosition({ x: x - 45, y: y - 60 });
+            setPosition({ x: x -43, y: y - 80 });
         }
         document.addEventListener("mousemove", handleMouseMove);
+
+        if (!isReportsListScrollbar) {
+            setUserIsScrolling(false);
+        }
 
         return () => {
             document.removeEventListener("mousemove", handleMouseMove);
