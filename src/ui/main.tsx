@@ -8,6 +8,7 @@ import { MappingUpdateContext } from "../providers/mappingUpdateContext";
 import { ThemeProvider } from "./themeProvider";
 import ScrollInfo from "./scrollInfo";
 import { ScrollContext, UserIsScrollingContext } from "../providers/scrollContext";
+import MinimumDistanceSlider from "./minDistanceSlider";
 
 export default function Main() {
   const [reportsByGeoPoint, setReportsByGeoPoint] = useState([]);
@@ -33,6 +34,7 @@ export default function Main() {
       <MappingUpdateContext.Provider value={{ canUpdateMapping, setCanUpdateMapping }}>
         <ThemeProvider>
           <ThemeSwitcher></ThemeSwitcher>
+          <MinimumDistanceSlider></MinimumDistanceSlider>
           <ScrollContext.Provider value={{ isReportsListScrollbar, setIsReportsListScrollbar }}>
             <UserIsScrollingContext.Provider value={{ userIsScrolling, setUserIsScrolling }}>
               <ScrollInfo></ScrollInfo>
