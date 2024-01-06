@@ -93,6 +93,7 @@
 
 .min-dist-slider {
   position: absolute;
+  /* height: fit-content; */
   width: 600px;
   bottom: 1rem;
   left: 0;
@@ -100,7 +101,7 @@
   margin: auto;
   z-index: 7;
   background-color: rgba(255, 255, 255, 0.8);
-  padding: 1.5rem 2rem .5rem 2rem;
+  padding: 1rem 2rem 1rem 2rem;
   border-radius: 0.25rem;
 }
 

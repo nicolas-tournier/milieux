@@ -1,23 +1,15 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
-
-const marks = [
-  {
-    value: 0,
-    label: 'Day 0',
-  },
-  {
-    value: 100,
-    label: 'Today',
-  },
-];
+import Stack from '@mui/material/Stack';
+import HourglassTopOutlinedIcon from '@mui/icons-material/HourglassTopOutlined';
+import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 
 function valuetext(value: number) {
   return `${value}%`;
 }
 
-const minDistance = 10;
+const minDistance = 1;
 
 export default function MinimumDistanceSlider() {
 
@@ -48,17 +40,32 @@ export default function MinimumDistanceSlider() {
   return (
     <nav className="min-dist-slider">
       <Box>
-        <Slider
-          getAriaLabel={() => 'Minimum distance shift'}
-          value={value}
-          onChange={handleChange}
-          valueLabelDisplay="auto"
-          getAriaValueText={valuetext}
-          disableSwap
-          marks={marks}
-        />
+        <Stack spacing={3} direction="row" sx={{ mb: 1 }} alignItems="center">
+          <HourglassTopOutlinedIcon sx={{ color: '#9CA3AF' }} />
+          <Slider
+            getAriaLabel={() => 'Minimum distance shift'}
+            value={value}
+            onChange={handleChange}
+            valueLabelDisplay="auto"
+            getAriaValueText={valuetext}
+            disableSwap
+            sx={{
+              color: '#60A5FA',
+              '& .MuiSlider-thumb': {
+                backgroundColor: '#60A5FA',
+              },
+              '& .MuiSlider-rail': {
+                color: '#60A5FA',
+              },
+              '& .MuiSlider-track': {
+                color: '#60A5FA',
+              },
+            }}
+          />
+          <HourglassBottomOutlinedIcon sx={{ color: '#9CA3AF' }} />
+        </Stack>
       </Box>
-      <span className="min-dist-slider-label absolute bottom-3 left-0 right-0 text-center">Minimum distance shift</span>
+      <span className="min-dist-slider-label absolute bottom-1.5 left-0 right-0 text-center text-gray-600">minimum distance shift</span>
     </nav>
   );
 }
