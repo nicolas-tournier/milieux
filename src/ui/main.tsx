@@ -4,19 +4,16 @@ import ReportsList from "./reportsList";
 import ThemeSwitcher from "./themeSwitcher";
 import InputPanel from "./inputPanel";
 import { extractReportsByGeoPoint } from "../firestore/databaseTransact";
-import { MappingUpdateContext } from "../providers/mappingUpdateContext";
-import { TimespanContext, TimespanProvider } from "../providers/timeSpanContext";
+import { MappingUpdateProvider } from "../providers/mappingUpdateContext";
+import { TimespanProvider } from "../providers/timeSpanProvider";
 import { ThemeProvider } from "../providers/themeProvider";
 import ScrollInfo from "./scrollInfo";
-import { ScrollContext, UserIsScrollingContext } from "../providers/scrollContext";
+import { ScrollProvider, UserIsScrollingProvider } from "../providers/scrollContext";
 import MinimumDistanceSlider from "./minDistanceSlider";
 
 export default function Main({ dateSpan, setDateSpan }) {
   const [reportsByGeoPoint, setReportsByGeoPoint] = useState([]);
   const [currentHoveredGeoPoints, setCurrentHoveredGeoPoints] = useState([]);
-  const [canUpdateMapping, setCanUpdateMapping] = useState(true);
-  const [isReportsListScrollbar, setIsReportsListScrollbar] = useState(false);
-  const [userIsScrolling, setUserIsScrolling] = useState(false);
 
   useEffect(() => {
     getReportsByGeopoint();
@@ -32,24 +29,24 @@ export default function Main({ dateSpan, setDateSpan }) {
 
   return (
     <div className="main">
-      <MappingUpdateContext.Provider value={{ canUpdateMapping, setCanUpdateMapping }}>
+      <MappingUpdateProvider>
         <ThemeProvider>
           <ThemeSwitcher></ThemeSwitcher>
           <TimespanProvider>
             <MinimumDistanceSlider></MinimumDistanceSlider>
           </TimespanProvider>
-          <ScrollContext.Provider value={{ isReportsListScrollbar, setIsReportsListScrollbar }}>
-            <UserIsScrollingContext.Provider value={{ userIsScrolling, setUserIsScrolling }}>
+          <ScrollProvider>
+            <UserIsScrollingProvider>
               <ScrollInfo></ScrollInfo>
               <InputPanel></InputPanel>
               <ReportsList reportsByGeoPoint={reportsByGeoPoint}></ReportsList>
               <Mapping
                 setCurrentHoveredGeoPoints={setCurrentHoveredGeoPoints}
               ></Mapping>
-            </UserIsScrollingContext.Provider>
-          </ScrollContext.Provider>
+            </UserIsScrollingProvider>
+          </ScrollProvider>
         </ThemeProvider>
-      </MappingUpdateContext.Provider>
+      </MappingUpdateProvider>
     </div>
   );
 }

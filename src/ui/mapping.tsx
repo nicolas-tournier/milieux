@@ -160,7 +160,6 @@ export default function Mapping({
   }, [isReportsListScrollbar]);
 
   useEffect(() => {
-    // if (!hoverGeoPoint) return;
     const data = gridLayer.props.data;
     if (data.length > 0) {
       const newTree = new Rbush();
@@ -199,7 +198,6 @@ export default function Mapping({
   }, [userIsScrolling]);
 
   function handleClick(event) {
-
     let isScrolling = userIsScrolling;
     if (isReportsListScrollbar && !isScrolling) {
       isScrolling = true;
@@ -235,9 +233,6 @@ export default function Mapping({
       setHoveredGeoPoints(filteredGeoPoints);
     }
   }
-
-
-  // ...
 
   const debouncedCallback = useDebouncedCallback(
     ({ viewState }) => {

@@ -4,7 +4,7 @@ import Slider from '@mui/material/Slider';
 import Stack from '@mui/material/Stack';
 import HourglassTopOutlinedIcon from '@mui/icons-material/HourglassTopOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
-import { IDateSpan, TimespanContext, earliestDate } from '../providers/timeSpanContext';
+import { IDateSpan, TimespanContext, earliestDate } from '../providers/timeSpanProvider';
 
 function valuetext(value: number) {
   return `${value}%`;

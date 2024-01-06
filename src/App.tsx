@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import "./app.css";
 import Main from "./ui/main";
-import { TimespanContext } from './providers/timeSpanContext';
+import { TimespanContext } from './providers/timeSpanProvider';
 
 function App() {
   

@@ -9,8 +9,8 @@ export const earliestDate = new Date(2024, 0, 1).getTime();
 
 export const TimespanContext = createContext({
     dateSpan: {
-        startDate: earliestDate,
-        endDate: new Date().getTime(),
+        startDate: 0,
+        endDate: 0,
     },
     setDateSpan: (dateSpan: IDateSpan) => { },
 });
