@@ -37,8 +37,8 @@ export default function MinimumDistanceSlider() {
     const startDate = dateSpan.startDate - earliest;
     const endDate = dateSpan.endDate - earliest;
 
-    const lowerDate = totalTimeSpan * (lower / 100);
-    const higherDate = totalTimeSpan * (higher / 100);
+    const lowerDate = earliest + totalTimeSpan * (lower / 100);
+    const higherDate = earliest + totalTimeSpan * (higher / 100);
 
     return {
       startDate: lowerDate,
