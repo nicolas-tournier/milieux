@@ -1,9 +1,10 @@
-import * as React from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import Stack from '@mui/material/Stack';
 import HourglassTopOutlinedIcon from '@mui/icons-material/HourglassTopOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
+import { IDateSpan, TimespanContext, earliestDate } from '../providers/timeSpanContext';
 
 function valuetext(value: number) {
   return `${value}%`;
@@ -13,8 +14,37 @@ const minDistance = 1;
 
 export default function MinimumDistanceSlider() {
 
-  const [value, setValue] = React.useState<number[]>([90, 100]);
+  const [sliderValues, setSliderValues] = useState<number[]>([90, 100]);
+  const [dateSpanText, setDateSpanText] = useState<string>('');
+  const { dateSpan, setDateSpan } = useContext(TimespanContext);
 
+  useEffect(() => {
+    const newDateSpan = findDate(sliderValues[0], sliderValues[1]);
+    setDateSpan(newDateSpan);
+  }, [sliderValues]);
+
+  useEffect(() => {
+    const dateSpanText = `${new Date(dateSpan.startDate).toLocaleDateString()} - ${new Date(dateSpan.endDate).toLocaleDateString()}`;
+    setDateSpanText(dateSpanText);
+  }, [dateSpan]);
+
+  function findDate(lower: number, higher: number): IDateSpan {
+
+    const earliest = earliestDate;
+    const latest = new Date().getTime();
+    const totalTimeSpan = latest - earliest;
+    
+    const startDate = dateSpan.startDate - earliest;
+    const endDate = dateSpan.endDate - earliest;
+
+    const lowerDate = totalTimeSpan * (lower / 100);
+    const higherDate = totalTimeSpan * (higher / 100);
+
+    return {
+      startDate: lowerDate,
+      endDate: higherDate
+    }
+  }
   const handleChange = (
     event: Event,
     newValue: number | number[],
@@ -27,13 +57,13 @@ export default function MinimumDistanceSlider() {
     if (newValue[1] - newValue[0] < minDistance) {
       if (activeThumb === 0) {
         const clamped = Math.min(newValue[0], 100 - minDistance);
-        setValue([clamped, clamped + minDistance]);
+        setSliderValues([clamped, clamped + minDistance]);
       } else {
         const clamped = Math.max(newValue[1], minDistance);
-        setValue([clamped - minDistance, clamped]);
+        setSliderValues([clamped - minDistance, clamped]);
       }
     } else {
-      setValue(newValue as number[]);
+      setSliderValues(newValue as number[]);
     }
   };
 
@@ -44,7 +74,7 @@ export default function MinimumDistanceSlider() {
           <HourglassTopOutlinedIcon sx={{ color: '#9CA3AF' }} />
           <Slider
             getAriaLabel={() => 'Minimum distance shift'}
-            value={value}
+            value={sliderValues}
             onChange={handleChange}
             valueLabelDisplay="auto"
             getAriaValueText={valuetext}
@@ -65,7 +95,7 @@ export default function MinimumDistanceSlider() {
           <HourglassBottomOutlinedIcon sx={{ color: '#9CA3AF' }} />
         </Stack>
       </Box>
-      <span className="min-dist-slider-label absolute bottom-1.5 left-0 right-0 text-center text-gray-600">minimum distance shift</span>
+      <span className="min-dist-slider-label absolute bottom-1.5 left-0 right-0 text-center text-gray-600">{dateSpanText}</span>
     </nav>
   );
 }

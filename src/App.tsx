@@ -1,10 +1,20 @@
+import { useContext } from "react";
 import "./app.css";
 import Main from "./ui/main";
+import { TimespanContext } from './providers/timeSpanContext';
 
 function App() {
+  
+  const { dateSpan, setDateSpan } = useContext(TimespanContext);
+
   return (
     <div id="app" className="app">
-      <Main></Main>
+      <Main {
+        ...{
+          dateSpan,
+          setDateSpan
+        }
+      }></Main>
     </div>
   );
 }

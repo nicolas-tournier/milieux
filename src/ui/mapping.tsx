@@ -16,7 +16,7 @@ import { colorRange } from "../const/constants";
 import { ScrollContext, UserIsScrollingContext } from "../providers/scrollContext";
 import { useDebouncedCallback } from 'use-debounce';
 import { MappingUpdateContext } from "../providers/mappingUpdateContext";
-import { useTheme } from "./themeProvider";
+import { useTheme } from "../providers/themeProvider";
 
 // const MAP_STYLE =
 //   "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";

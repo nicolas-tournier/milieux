@@ -1,5 +1,5 @@
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { useTheme } from './themeProvider'; // adjust the path to where you saved the ThemeProvider component
+import { useTheme } from '../providers/themeProvider'; // adjust the path to where you saved the ThemeProvider component
 
 // Your ThemeSwitcher component can now use the useTheme hook
 export default function ThemeSwitcher() {
