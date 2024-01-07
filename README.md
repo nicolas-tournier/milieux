@@ -1,3 +1,43 @@
+# Welcome to Milieux
+
+By Nicolas Tournier
+
+This is purely a proof of concept.
+
+The goal is to add colored dots to a world map. These dots are added when a user shares a comment about their current environment or “milieu”.
+The app uses sentiment analysis to determine the emotional tone of the comment, which is then represented by a score. The color of the dot at the user’s location on the map corresponds to this emotional tone.
+So, in essence, the app seeks to visually map people’s feelings about their environments on a global scale. 😊
+
+Roll over, drill down and back up, and explore the world of feeling. You can even choose a timeframe!
+
+I hope it is interesting.
+
+The app takes no personal data and authenticates anonymously.
+The location of the user will be store in a Google cloud database for use with this app and won't be used for any other purpose.
+Location will need to be enabled on the user's browser for this app to function correctly.
+
+### View a running version here:
+
+https://milieux-b9d27.web.app
+
+
+### Tech Stack:
+
+React
+DeckGl
+Firebase
+Vader Sentiment Analysis
+GIT
+
+### Run locally:
+
+npm install
+firebase emulators:start
+npm run start
+
+Please note that there is a small bug wherein the visible datapoints will not appear until a somewhat positive comment is added.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -18,6 +58,8 @@ You will also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+Note that there are not currently any tests for this project.
 
 ### `npm run build`
 
