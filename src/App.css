@@ -127,7 +127,19 @@
   z-index: 4;
 }
 
-.scroll-info .hows-it-going {
+.scroll-info div {
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll-info .wheel-to-scroll.hide {
+  display: none;
+}
+
+.scroll-info span {
+  display: flex;
+  justify-content: center;
+  white-space: nowrap;
   font-size: 0.75rem;
   color: #fff;
   background-color: rgba(0, 0, 0, 0.5);

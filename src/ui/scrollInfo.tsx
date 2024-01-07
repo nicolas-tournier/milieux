@@ -27,10 +27,9 @@ export default function ScrollInfo() {
 
     let span = null;
     if (isReportsListScrollbar && !userIsScrolling) {
-        console.log("scroll info")
         span = <span>Click to scroll</span>;
     } else if (userIsScrolling) {
-        span = <span>Use wheel or click to exit</span>;
+        span = <div><span className={`wheel-to-scroll ${!isReportsListScrollbar ? 'hide' : ''}`}>Wheel to scroll</span><span>Click to exit</span></div>;
     }
     return (
         <div className="scroll-info" style={{ top: position.y, left: position.x }}>
