@@ -1,6 +1,6 @@
 # Welcome to Milieux
 
-By Nicolas Tournier
+By Nicolas Tournier Copyright 2024
 
 This is purely a proof of concept.
 
