@@ -81,7 +81,7 @@
 
 .reports-list {
   position: absolute;
-  z-index: 6;
+  z-index: 7;
   min-width: 14rem;
 }
 
@@ -94,13 +94,12 @@
 
 .min-dist-slider {
   position: absolute;
-  /* height: fit-content; */
   width: 700px;
   bottom: 1rem;
   left: 0;
   right: 0;
   margin: auto;
-  z-index: 7;
+  z-index: 6;
   background-color: rgba(255, 255, 255, 0.8);
   padding: 1rem 2rem 1rem 2rem;
   border-radius: 0.25rem;
