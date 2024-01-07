@@ -6,7 +6,7 @@ export const ScrollContext = React.createContext({
 });
 
 export function ScrollProvider({ children }) {
-  const [isReportsListScrollbar, setIsReportsListScrollbar] = useState(true);
+  const [isReportsListScrollbar, setIsReportsListScrollbar] = useState(false);
 
   return (
     <ScrollContext.Provider value={{ isReportsListScrollbar, setIsReportsListScrollbar }} >
