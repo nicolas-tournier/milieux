@@ -7,10 +7,6 @@ import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutl
 import { IDateSpan, TimespanContext, earliestDate } from '../providers/timeSpanProvider';
 import { MappingUpdateContext } from '../providers/mappingUpdateContext';
 
-function valuetext(value: number) {
-  return `${value}%`;
-}
-
 const minDistance = 1;
 
 export default function MinimumDistanceSlider() {
@@ -76,7 +72,6 @@ export default function MinimumDistanceSlider() {
             value={sliderValues}
             onChange={handleChange}
             valueLabelDisplay="auto"
-            getAriaValueText={valuetext}
             disableSwap
             sx={{
               color: '#60A5FA',
