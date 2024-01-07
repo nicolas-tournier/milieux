@@ -1,12 +1,14 @@
 # Welcome to Milieux
 
+(Not yet for mobile)
+
 By Nicolas Tournier Copyright 2024
 
 This is purely a proof of concept.
 
 The goal is to add colored dots to a world map. These dots are added when a user shares a comment about their current environment or “milieu”.
 The app uses sentiment analysis to determine the emotional tone of the comment, which is then represented by a score. The color of the dot at the user’s location on the map corresponds to this emotional tone.
-So, in essence, the app seeks to visually map people’s feelings about their environments on a global scale. 😊
+So, in essence, the app seeks to visually map people’s feelings about their environments on a global scale.
 
 Drag, drill down and back up, rollover for comments, and explore the world of feeling. You can even choose a timeframe!
 
