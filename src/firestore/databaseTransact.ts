@@ -39,21 +39,30 @@ export async function createRecord(uid: string, sentiment: RecordSentiment): Pro
     });
 }
 
-export function getMapData(callback) {
-
-    onSnapshot(collection(fsDb, "reports"),
-        async (snapshot) => {
-            let mapData: Array<any> = [];
-            snapshot.docs.forEach((doc: any) => {
-                const data = doc.data();
-                const entry = [data.location.longitude, data.location.latitude, data.sentiment?.meanWeight];
-                mapData.push(entry);
-            });
-            callback(mapData);
-        }, async (error) => {
-            console.log('error ', error);
-        });
-
+export function getMapData(): Promise<Array<any>> {
+    return new Promise((resolve, reject) => {
+        onSnapshot(
+            collection(fsDb, "reports"),
+            async (snapshot) => {
+                let mapData: Array<any> = [];
+                snapshot.docs.forEach((doc: any) => {
+                    const data = doc.data();
+                    const entry = [
+                        data.location.longitude,
+                        data.location.latitude,
+                        data.sentiment?.meanWeight,
+                        new Date(data.time).getTime(),
+                    ];
+                    mapData.push(entry);
+                });
+                resolve(mapData);
+            },
+            async (error) => {
+                console.log('error ', error);
+                reject(error);
+            }
+        );
+    });
 }
 
 export async function extractReportsByGeoPoint(dataSet) {

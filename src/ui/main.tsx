@@ -34,17 +34,17 @@ export default function Main({ dateSpan, setDateSpan }) {
           <ThemeSwitcher></ThemeSwitcher>
           <TimespanProvider>
             <MinimumDistanceSlider></MinimumDistanceSlider>
+            <ScrollProvider>
+              <UserIsScrollingProvider>
+                <ScrollInfo></ScrollInfo>
+                <InputPanel></InputPanel>
+                <ReportsList reportsByGeoPoint={reportsByGeoPoint}></ReportsList>
+                <Mapping
+                  setCurrentHoveredGeoPoints={setCurrentHoveredGeoPoints}
+                ></Mapping>
+              </UserIsScrollingProvider>
+            </ScrollProvider>
           </TimespanProvider>
-          <ScrollProvider>
-            <UserIsScrollingProvider>
-              <ScrollInfo></ScrollInfo>
-              <InputPanel></InputPanel>
-              <ReportsList reportsByGeoPoint={reportsByGeoPoint}></ReportsList>
-              <Mapping
-                setCurrentHoveredGeoPoints={setCurrentHoveredGeoPoints}
-              ></Mapping>
-            </UserIsScrollingProvider>
-          </ScrollProvider>
         </ThemeProvider>
       </MappingUpdateProvider>
     </div>

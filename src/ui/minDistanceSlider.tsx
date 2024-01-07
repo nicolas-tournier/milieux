@@ -5,6 +5,7 @@ import Stack from '@mui/material/Stack';
 import HourglassTopOutlinedIcon from '@mui/icons-material/HourglassTopOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import { IDateSpan, TimespanContext, earliestDate } from '../providers/timeSpanProvider';
+import { MappingUpdateContext } from '../providers/mappingUpdateContext';
 
 function valuetext(value: number) {
   return `${value}%`;
@@ -17,6 +18,7 @@ export default function MinimumDistanceSlider() {
   const [sliderValues, setSliderValues] = useState<number[]>([90, 100]);
   const [dateSpanText, setDateSpanText] = useState<string>('');
   const { dateSpan, setDateSpan } = useContext(TimespanContext);
+  const { setCanUpdateMapping } = useContext(MappingUpdateContext);
 
   useEffect(() => {
     const newDateSpan = findDate(sliderValues[0], sliderValues[1]);
@@ -26,6 +28,7 @@ export default function MinimumDistanceSlider() {
   useEffect(() => {
     const dateSpanText = `${new Date(dateSpan.startDate).toLocaleDateString()} - ${new Date(dateSpan.endDate).toLocaleDateString()}`;
     setDateSpanText(dateSpanText);
+    setCanUpdateMapping(true);
   }, [dateSpan]);
 
   function findDate(lower: number, higher: number): IDateSpan {

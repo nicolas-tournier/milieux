@@ -17,6 +17,7 @@ import { ScrollContext, UserIsScrollingContext } from "../providers/scrollContex
 import { useDebouncedCallback } from 'use-debounce';
 import { MappingUpdateContext } from "../providers/mappingUpdateContext";
 import { useTheme } from "../providers/themeProvider";
+import { TimespanContext } from "../providers/timeSpanProvider";
 
 // const MAP_STYLE =
 //   "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
@@ -114,6 +115,7 @@ export default function Mapping({
 
   const [gridLayer, setGridLayer] = useState(gridLayerInit);
   const { canUpdateMapping, setCanUpdateMapping } = useContext(MappingUpdateContext);
+  const { dateSpan } = useContext(TimespanContext);
 
   const [scatterplotLayer, setScatterplotLayer] =
     useState(scatterplotLayerInit);
@@ -131,15 +133,28 @@ export default function Mapping({
 
   useEffect(() => {
     if (!canUpdateMapping) return;
-    getMapData((newData) => {
-      let _gridLayer = new ScreenGridLayer({
-        ...gridLayer.props,
-        data: newData,
-      });
-      setGridLayer(_gridLayer);
-      setCanUpdateMapping(false);
-    });
-  }, [canUpdateMapping]);
+    let isCancelled = false;
+    
+    const fetchData = async () => {
+      const newData = await getMapData();
+      if (!isCancelled) {
+        let filtered = newData.filter((point) => point[3] >= dateSpan.startDate && point[3] <= dateSpan.endDate);
+        let _gridLayer = new ScreenGridLayer({
+          ...gridLayer.props,
+          data: [...filtered],
+          id: `grid-${Date.now()}`, // Append a unique identifier to the id as the Map key, to ensure the map updates
+        });
+        setGridLayer(_gridLayer);
+        setCanUpdateMapping(false);
+      }
+    };
+  
+    fetchData();
+  
+    return () => {
+      isCancelled = true;
+    };
+  }, [canUpdateMapping, dateSpan]);
 
   useEffect(() => {
     let _spLayer = new ScatterplotLayer({
@@ -268,7 +283,7 @@ export default function Mapping({
       controller={mapIsInteractive}
       preventStyleDiffing={true}
     >
-      <Map reuseMaps mapLib={maplibregl as MapLib<any>} mapStyle={mapStyle} />
+      <Map key={gridLayer.id} reuseMaps mapLib={maplibregl as MapLib<any>} mapStyle={mapStyle} />
     </DeckGL>
   );
 }
