@@ -8,12 +8,12 @@ The goal is to add colored dots to a world map. These dots are added when a user
 The app uses sentiment analysis to determine the emotional tone of the comment, which is then represented by a score. The color of the dot at the user’s location on the map corresponds to this emotional tone.
 So, in essence, the app seeks to visually map people’s feelings about their environments on a global scale. 😊
 
-Roll over, drill down and back up, and explore the world of feeling. You can even choose a timeframe!
+Drag, drill down and back up, rollover for comments, and explore the world of feeling. You can even choose a timeframe!
 
 I hope it is interesting.
 
 The app takes no personal data and authenticates anonymously.
-The location of the user will be store in a Google cloud database for use with this app and won't be used for any other purpose.
+The location of the user is stored in a Google cloud database, for use with this app only. It won't be used for any other purpose.
 Location will need to be enabled on the user's browser for this app to function correctly.
 
 ### View a running version here:
