@@ -23,17 +23,17 @@ https://milieux-b9d27.web.app
 
 ### Tech Stack:
 
-React.
-DeckGl.
-Firebase.
-Vader Sentiment Analysis.
-GIT.
+React  
+DeckGl  
+Firebase  
+Vader Sentiment Analysis  
+GIT  
 
 ### Run locally:
 
-npm install.
-firebase emulators:start.
-npm run start.
+npm install  
+firebase emulators:start  
+npm run start  
 
 Please note that there is a small bug wherein the visible datapoints will not appear until a somewhat positive comment is added.
 
