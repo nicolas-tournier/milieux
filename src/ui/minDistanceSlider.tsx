@@ -15,7 +15,7 @@ const minDistance = 1;
 
 export default function MinimumDistanceSlider() {
 
-  const [sliderValues, setSliderValues] = useState<number[]>([90, 100]);
+  const [sliderValues, setSliderValues] = useState<number[]>([0, 100]);
   const [dateSpanText, setDateSpanText] = useState<string>('');
   const { dateSpan, setDateSpan } = useContext(TimespanContext);
   const { setCanUpdateMapping } = useContext(MappingUpdateContext);
