@@ -39,6 +39,21 @@ export async function createRecord(uid: string, sentiment: RecordSentiment): Pro
     });
 }
 
+export async function hasReachedDailyCommentLimit(uid: string): Promise<boolean> {
+    
+    const reports = await getDocsFromCache(collection(fsDb, "reports")) as any;
+    const docs: Array<any> = reports.docs;
+    const today = new Date().toDateString();
+    let count = 0;
+    docs.forEach(doc => {
+        const docData = doc.data();
+        if (docData.uid === uid && docData.time === today) {
+            count++;
+        }
+    });
+    return count > 4;
+}
+
 export function getMapData(): Promise<Array<any>> {
     return new Promise((resolve, reject) => {
         onSnapshot(
