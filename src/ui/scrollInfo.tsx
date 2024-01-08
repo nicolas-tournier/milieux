@@ -12,7 +12,10 @@ export default function ScrollInfo() {
         const handleMouseMove = (event) => {
             let x = event.clientX;
             let y = event.clientY;
-            setPosition({ x: x -43, y: y - 80 });
+            let adjust_x = userIsScrolling ? 65 : 43;
+            let adjust_y = userIsScrolling ? 105 : 80;
+
+            setPosition({ x: x - adjust_x, y: y - adjust_y });
         }
         document.addEventListener("mousemove", handleMouseMove);
 
@@ -23,7 +26,7 @@ export default function ScrollInfo() {
         return () => {
             document.removeEventListener("mousemove", handleMouseMove);
         };
-    }, []);
+    }, [userIsScrolling]);
 
     let span = null;
     if (isReportsListScrollbar && !userIsScrolling) {
