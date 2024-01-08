@@ -81,7 +81,9 @@ export default function ReportsList({ reportsByGeoPoint }) {
       }}
     >
       <ul className="list-none list-inside space-y-2 pointer-events-auto">
-        {reportsByGeoPoint.map((report, index) => (
+        {reportsByGeoPoint
+        .sort((a, b) => Date.parse(b.time) - Date.parse(a.time))
+        .map((report, index) => (
           <li key={index} className="text-gray-700 pointer-events-none">
             {createReportSummary(report)}
           </li>
