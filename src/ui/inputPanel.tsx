@@ -38,6 +38,9 @@ export default function InputPanel() {
     };
 
     useEffect(() => {
+
+        if(input !== "") return;
+        
         hasReachedDailyCommentLimit(uid).then((hasReachedLimit) => {
             if (hasReachedLimit) {
                 setPlaceholderText("You have reached your daily comment limit. Please visit again soon.");

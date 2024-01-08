@@ -32,7 +32,7 @@ export default function ScrollInfo() {
     if (isReportsListScrollbar && !userIsScrolling) {
         span = <span>Click to scroll</span>;
     } else if (userIsScrolling) {
-        span = <div><span className={`wheel-to-scroll ${!isReportsListScrollbar ? 'hide' : ''}`}>Wheel to scroll</span><span>Click to exit scrolling</span></div>;
+        span = <div><span className={`wheel-to-scroll ${!isReportsListScrollbar ? 'hide' : ''}`}>Wheel to scroll</span><span>{isReportsListScrollbar ? "Click to exit scrolling" : "Click to interact with map"}</span></div>;
     }
     return (
         <div className="scroll-info" style={{ top: position.y, left: position.x }}>
