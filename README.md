@@ -7,7 +7,7 @@ By Nicolas Tournier Copyright 2024
 This is purely a proof of concept.
 
 The app uses sentiment analysis to determine the emotional tone of the user's comments, which are each represented by a score.
-When a user shares a comment about their current environment or “milieu”, the emotional score of the comment is represented by a colour, which is used to paint a tile on the map at the user's location.
+When users share comments about their current environment or “milieu”, the emotional score of each comment is represented by a colour, which is used to paint a tile on the map at the user's location.
 So, in essence, the app seeks to visually map people’s feelings about their environments on a big map.
 
 Drag, drill down and back up, rollover for comments, and explore the world of feeling. You can even choose a timeframe!
