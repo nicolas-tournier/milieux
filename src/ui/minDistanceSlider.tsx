@@ -30,7 +30,9 @@ export default function MinimumDistanceSlider() {
   function findDate(lower: number, higher: number): IDateSpan {
 
     const earliest = earliestDate;
-    const latest = new Date().getTime();
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const latest = midnight.getTime();
     const totalTimeSpan = latest - earliest;
     const lowerDate = earliest + totalTimeSpan * (lower / 100);
     const higherDate = earliest + totalTimeSpan * (higher / 100);

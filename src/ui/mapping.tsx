@@ -137,6 +137,7 @@ export default function Mapping({
     
     const fetchData = async () => {
       const newData = await getMapData();
+      console.log(dateSpan);
       if (!isCancelled) {
         let filtered = newData.filter((point) => point[3] >= dateSpan.startDate && point[3] <= dateSpan.endDate);
         let _gridLayer = new ScreenGridLayer({
