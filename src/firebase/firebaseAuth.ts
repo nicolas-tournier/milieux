@@ -12,7 +12,7 @@ export const createAuth = (fbApp, authCallBack) => {
 
     signInAnonymously(firebaseAuth)
         .then((result) => {
-            console.log("signed in! ", result.user);
+            console.log("autonomous sign-in auccessful! ");
         })
         .catch((error) => {
             const errorCode = error.code;
