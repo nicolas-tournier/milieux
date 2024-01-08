@@ -73,7 +73,7 @@ export default function ReportsList({ reportsByGeoPoint }) {
   return (
     <div
       ref={reportsListRef}
-      className="reports-list bg-white p-2 rounded shadow-lg max-w-xl overflow-auto scrollbar absolute"
+      className="reports-list bg-white p-2 rounded shadow-lg max-w-xl md:max-w-xs overflow-auto scrollbar absolute"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,

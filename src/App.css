@@ -70,6 +70,7 @@
 }
 
 @media screen and (max-width: 820px) {
+
   .input-panel {
     left: 1rem;
     width: calc(100vw - 7rem);
@@ -92,7 +93,7 @@
   }
 
   .theme-switcher {
-    right: 1rem !important ;
+    right: 1rem !important;
   }
 }
 
