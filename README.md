@@ -6,9 +6,9 @@ By Nicolas Tournier Copyright 2024
 
 This is purely a proof of concept.
 
-The goal is to add colored dots to a world map. These dots are added when a user shares a comment about their current environment or “milieu”.
-The app uses sentiment analysis to determine the emotional tone of the comment, which is then represented by a score. The color of the dot at the user’s location on the map corresponds to this emotional tone.
-So, in essence, the app seeks to visually map people’s feelings about their environments on a global scale.
+The app uses sentiment analysis to determine the emotional tone of the user's comments, which are each represented by a score.
+When a user shares a comment about their current environment or “milieu”, the emotional score of the comment is represented by a colour, which is used to paint a tile on the map at the user's location.
+So, in essence, the app seeks to visually map people’s feelings about their environments on a big map.
 
 Drag, drill down and back up, rollover for comments, and explore the world of feeling. You can even choose a timeframe!
 
@@ -36,9 +36,6 @@ GIT
 npm install  
 firebase emulators:start  
 npm run start  
-
-Please note that there is a small bug wherein the visible datapoints will not appear until a somewhat positive comment is added.
-
 
 # Getting Started with Create React App
 
