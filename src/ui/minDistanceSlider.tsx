@@ -6,6 +6,7 @@ import HourglassTopOutlinedIcon from '@mui/icons-material/HourglassTopOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import { IDateSpan, TimespanContext, earliestDate } from '../providers/timeSpanProvider';
 import { MappingUpdateContext } from '../providers/mappingUpdateContext';
+import { format } from 'date-fns';
 
 const minDistance = 1;
 
@@ -42,6 +43,12 @@ export default function MinimumDistanceSlider() {
       endDate: higherDate
     }
   }
+
+  const tooltipFormatter = (value, index) => {
+    const date = new Date(findDate(sliderValues[0], sliderValues[1])[index === 0 ? 'startDate' : 'endDate']);
+    return format(date, 'dd/MM/yy');
+  };
+ 
   const handleChange = (
     event: Event,
     newValue: number | number[],
@@ -70,6 +77,7 @@ export default function MinimumDistanceSlider() {
         <Stack spacing={3} direction="row" sx={{ mb: 1 }} alignItems="center">
           <HourglassTopOutlinedIcon sx={{ color: '#9CA3AF' }} />
           <Slider
+            valueLabelFormat={tooltipFormatter}
             getAriaLabel={() => 'Minimum distance shift'}
             value={sliderValues}
             onChange={handleChange}
