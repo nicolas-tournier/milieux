@@ -46,7 +46,7 @@
   .input-panel {
     top: 1rem;
     left: 15rem;
-    width: calc(100vw - 30rem);
+    width: calc(60vw);
   }
 
   .min-dist-slider {
@@ -65,7 +65,7 @@
   }
 
   .min-dist-slider {
-    width: calc(100vw - 10rem) !important;
+    width: calc(75vw) !important;
   }
 }
 
@@ -112,7 +112,7 @@
 
 .min-dist-slider {
   position: absolute;
-  width: calc(100vw - 30rem);
+  width: calc(50vw);
   bottom: 1rem;
   left: 0;
   right: 0;
