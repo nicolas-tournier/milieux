@@ -37,9 +37,9 @@ export default function InputPanel() {
         setIsSubmitting(true);
 
         createRecord(uid, recordSentiment).then(() => {
-            setIsSubmitting(true); // Show loading spinner
+            setIsSubmitting(true);
 
-            // After 1 second, hide loading spinner and show tick
+            // this doesn't need a formal response, just a visual cue
             setTimeout(() => {
                 setIsSubmitting(false);
                 setShowTick(true);
