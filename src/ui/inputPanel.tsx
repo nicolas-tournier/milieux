@@ -3,6 +3,8 @@ import { vaderSentiment } from "../services/ai/vaderSentiment";
 import { createRecord, hasReachedDailyCommentLimit } from "../firestore/databaseTransact";
 import { UidContext } from "../providers/uidContext";
 import { MappingUpdateContext } from "../providers/mappingUpdateContext";
+import { Check } from '@mui/icons-material';
+import { CircularProgress } from '@mui/material';
 
 export interface RecordSentiment {
     comment: string;
@@ -17,6 +19,8 @@ export default function InputPanel() {
     const [input, setInput] = useState('');
     const [limitReached, setLimitReached] = useState(false);
     const [placeholderText, setPlaceholderText] = useState("Describe your current milieu...");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showTick, setShowTick] = useState(false);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -30,8 +34,22 @@ export default function InputPanel() {
             compound
         }
 
+        setIsSubmitting(true);
+
         createRecord(uid, recordSentiment).then(() => {
-            setCanUpdateMapping(true);
+            setIsSubmitting(true); // Show loading spinner
+
+            // After 1 second, hide loading spinner and show tick
+            setTimeout(() => {
+                setIsSubmitting(false);
+                setShowTick(true);
+                setCanUpdateMapping(true);
+
+                setTimeout(() => {
+                    setShowTick(false);
+                }, 1000);
+            }, 1000);
+
         });
 
         setInput('');
@@ -39,8 +57,8 @@ export default function InputPanel() {
 
     useEffect(() => {
 
-        if(input !== "") return;
-        
+        if (input !== "") return;
+
         hasReachedDailyCommentLimit(uid).then((hasReachedLimit) => {
             if (hasReachedLimit) {
                 setPlaceholderText("You have reached your daily comment limit. Please visit again soon.");
@@ -57,8 +75,10 @@ export default function InputPanel() {
                 maxLength={200}
                 placeholder={placeholderText} value={input}
                 onChange={e => setInput(e.target.value)}
-                disabled={limitReached} />
-            <button className="w-[15%] h-10 mr-1 px-3 py-2 rounded-sm bg-blue-400 text-white font-semibold focus:outline-none" type="submit">Add</button>
+                disabled={limitReached || isSubmitting} />
+            <button className="w-[15%] h-10 mr-1 px-3 py-2 rounded-sm bg-blue-400 text-white font-semibold focus:outline-none transition duration-500" type="submit">
+                {showTick ? <Check /> : isSubmitting ? <CircularProgress color="inherit" size={24} /> : 'Add'}
+            </button>
         </form>
     )
 }
