@@ -8,7 +8,7 @@ import {
     onSnapshot,
 } from "firebase/firestore";
 import { IReport } from "./IDataBase";
-import { getFsDb } from "./getFirebaseService";
+import { getFsDb } from "../firebase/getFirebaseService";
 import intersection from 'lodash/intersection';
 import { RecordSentiment } from "../ui/inputPanel";
 

@@ -3,7 +3,7 @@ import {
     connectFirestoreEmulator,
 } from "firebase/firestore";
 import { connectAuthEmulator } from "firebase/auth";
-import { createAuth } from "../firebase/firebaseAuth";
+import { createAuth } from "./firebaseAuth";
 
 let fsDb;
 export const getFsDb = (fbApp) => {

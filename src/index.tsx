@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./app";
 import { firebaseApp } from "./firebase/firebaseConfig";
 import { setDoc, doc } from "firebase/firestore";
-import { getAuth, getFsDb } from "./firestore/getFirebaseService";
+import { getAuth, getFsDb } from "./firebase/getFirebaseService";
 import { UidContext } from "./providers/uidContext";
 
 // import reportWebVitals from "./reportWebVitals";
