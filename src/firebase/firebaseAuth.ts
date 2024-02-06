@@ -26,7 +26,6 @@ export const createAuth = (fbApp, authCallBack) => {
             // ...
         } else {
             // User is signed out
-            // ...
         }
     });
 
